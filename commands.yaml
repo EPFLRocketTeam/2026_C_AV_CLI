@@ -1,0 +1,31 @@
+pressurize:
+  lox:
+    "%float":
+      "%run": p_lox
+  eth:
+    "%float":
+      "%run": p_eth
+main:
+  lox:
+    "%bool":
+      "%run": main_lox
+  fuel:
+    "%bool":
+      "%run": main_fuel
+vent:
+  copv:
+    "%bool":
+      "%run": vent_copv
+  lox:
+    "%bool":
+      "%run": vent_lox
+  fuel:
+    "%bool":
+      "%run": vent_fuel
+pressure:
+  lox:
+    "%bool":
+      "%run": pressure_lox
+  fuel:
+    "%bool":
+      "%run": pressure_fuel
