@@ -19,6 +19,11 @@ import yaml
 TYPE_INFO = {
     "float": {"cpp_type": "float", "parse_expr": "strtof(ctx->arg_buffer, nullptr)"},
     "bool":  {"cpp_type": "bool",  "parse_expr": 'strcmp(ctx->arg_buffer, "open") == 0'},
+    # Zero-argument trigger commands (e.g. "prc ignite"): fires as soon as
+    # \n is typed right after the literal path, no argument buffered at
+    # all -- cpp_type is None rather than a real type, so the driver
+    # function takes no value parameter (just void* ctx).
+    "void":  {"cpp_type": None,   "parse_expr": None},
 }
 
 ARG_BUFFER_SIZE = 32  # usable chars; +1 more reserved for the NUL terminator
@@ -102,7 +107,10 @@ def generate_header(states, leaves, basename):
     lines.append("struct driver {")
     for function, type_name in functions:
         cpp_type = TYPE_INFO[type_name]["cpp_type"]
-        lines.append(f"    void (*{function})(void* ctx, {cpp_type} value);")
+        if cpp_type is None:
+            lines.append(f"    void (*{function})(void* ctx);")
+        else:
+            lines.append(f"    void (*{function})(void* ctx, {cpp_type} value);")
     lines.append("};")
     lines.append("")
     lines.append("struct context {")
@@ -132,14 +140,27 @@ def generate_source(states, basename):
         if s.arg_leaf is not None:
             type_name, function = s.arg_leaf
             parse_expr = TYPE_INFO[type_name]["parse_expr"]
-            lines.append("        if (c == '\\n') {")
-            lines.append(f"            ctx->arg_buffer[ctx->arg_len] = '\\0';")
-            lines.append(f"            drv->{function}(ctx->handler_ctx, {parse_expr});")
-            lines.append("            ctx->state = State_0;")
-            lines.append("            ctx->arg_len = 0;")
-            lines.append(f"        }} else if (ctx->arg_len < {ARG_BUFFER_SIZE}) {{")
-            lines.append("            ctx->arg_buffer[ctx->arg_len++] = c;")
-            lines.append("        }")
+            if parse_expr is None:
+                # void: fires immediately on \n, no argument buffered.
+                # Any other character just resets to State_0 -- a trigger
+                # command takes no argument, so "prc ignite x\n" is
+                # treated as a mistyped command rather than silently
+                # firing anyway.
+                lines.append("        if (c == '\\n') {")
+                lines.append(f"            drv->{function}(ctx->handler_ctx);")
+                lines.append("            ctx->state = State_0;")
+                lines.append("        } else {")
+                lines.append("            ctx->state = State_0;")
+                lines.append("        }")
+            else:
+                lines.append("        if (c == '\\n') {")
+                lines.append(f"            ctx->arg_buffer[ctx->arg_len] = '\\0';")
+                lines.append(f"            drv->{function}(ctx->handler_ctx, {parse_expr});")
+                lines.append("            ctx->state = State_0;")
+                lines.append("            ctx->arg_len = 0;")
+                lines.append(f"        }} else if (ctx->arg_len < {ARG_BUFFER_SIZE}) {{")
+                lines.append("            ctx->arg_buffer[ctx->arg_len++] = c;")
+                lines.append("        }")
         else:
             lines.append("        switch (c) {")
             for ch, child in sorted(s.children.items()):

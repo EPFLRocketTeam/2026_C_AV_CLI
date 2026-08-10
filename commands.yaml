@@ -29,3 +29,46 @@ pressure:
   fuel:
     "%bool":
       "%run": pressure_fuel
+prc:
+  clear_to_ignite:
+    "%void":
+      "%run": prc_clear_to_ignite
+  ignite:
+    "%void":
+      "%run": prc_ignite
+  passivate:
+    "%void":
+      "%run": prc_passivate
+  reset:
+    "%void":
+      "%run": prc_reset
+dpr:
+  lox:
+    pressurize:
+      "%bool":
+        "%run": dpr_lox_pressurize
+    abort:
+      "%void":
+        "%run": dpr_lox_abort
+    passivate:
+      "%void":
+        "%run": dpr_lox_passivate
+    reset:
+      "%void":
+        "%run": dpr_lox_reset
+  eth:
+    pressurize:
+      "%bool":
+        "%run": dpr_eth_pressurize
+    abort:
+      "%void":
+        "%run": dpr_eth_abort
+    passivate:
+      "%void":
+        "%run": dpr_eth_passivate
+    reset:
+      "%void":
+        "%run": dpr_eth_reset
+  broadcast_abort:
+    "%void":
+      "%run": dpr_broadcast_abort
