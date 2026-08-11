@@ -42,6 +42,9 @@ prc:
   reset:
     "%void":
       "%run": prc_reset
+  abort:
+    "%void":
+      "%run": prc_abort
 dpr:
   lox:
     pressurize:

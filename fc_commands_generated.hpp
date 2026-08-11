@@ -205,6 +205,12 @@ enum State {
     State_194,
     State_195,
     State_196,
+    State_197,
+    State_198,
+    State_199,
+    State_200,
+    State_201,
+    State_202,
 };
 
 struct driver {
@@ -221,6 +227,7 @@ struct driver {
     void (*main_lox)(void* ctx, bool value);
     void (*p_eth)(void* ctx, float value);
     void (*p_lox)(void* ctx, float value);
+    void (*prc_abort)(void* ctx);
     void (*prc_clear_to_ignite)(void* ctx);
     void (*prc_ignite)(void* ctx);
     void (*prc_passivate)(void* ctx);
