@@ -60,7 +60,13 @@ def build_trie(leaves):
     for path, type_name, function in leaves:
         if type_name not in TYPE_INFO:
             sys.exit(f"unknown type '{type_name}' for command '{path}'")
-        literal = path + " "
+        # Trailing space separates the command name from its argument
+        # (e.g. "main lox " then "open") -- but void commands take no
+        # argument at all, so there's nothing for a user to type after
+        # the command name, and requiring that space before \n anyway
+        # means the command could never actually be typed naturally.
+        is_void = TYPE_INFO[type_name]["parse_expr"] is None
+        literal = path if is_void else path + " "
         node = root
         for ch in literal:
             if ch not in node.children:

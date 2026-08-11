@@ -191,18 +191,6 @@ enum State {
     State_180,
     State_181,
     State_182,
-    State_183,
-    State_184,
-    State_185,
-    State_186,
-    State_187,
-    State_188,
-    State_189,
-    State_190,
-    State_191,
-    State_192,
-    State_193,
-    State_194,
 };
 
 struct driver {
