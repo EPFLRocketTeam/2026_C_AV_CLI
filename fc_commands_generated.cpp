@@ -90,7 +90,7 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_11: {
         if (c == '\n') {
             ctx->arg_buffer[ctx->arg_len] = '\0';
-            drv->pressurize(ctx->handler_ctx, strcmp(ctx->arg_buffer, "open") == 0);
+            drv->pressurize(ctx->handler_ctx, strcmp(ctx->arg_buffer, "on") == 0);
             ctx->state = State_0;
             ctx->arg_len = 0;
         } else if (ctx->arg_len < 32) {
@@ -158,7 +158,7 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_20: {
         if (c == '\n') {
             ctx->arg_buffer[ctx->arg_len] = '\0';
-            drv->main_lox(ctx->handler_ctx, strcmp(ctx->arg_buffer, "open") == 0);
+            drv->main_lox(ctx->handler_ctx, strcmp(ctx->arg_buffer, "on") == 0);
             ctx->state = State_0;
             ctx->arg_len = 0;
         } else if (ctx->arg_len < 32) {
@@ -197,7 +197,7 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_25: {
         if (c == '\n') {
             ctx->arg_buffer[ctx->arg_len] = '\0';
-            drv->main_fuel(ctx->handler_ctx, strcmp(ctx->arg_buffer, "open") == 0);
+            drv->main_fuel(ctx->handler_ctx, strcmp(ctx->arg_buffer, "on") == 0);
             ctx->state = State_0;
             ctx->arg_len = 0;
         } else if (ctx->arg_len < 32) {
@@ -273,7 +273,7 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_35: {
         if (c == '\n') {
             ctx->arg_buffer[ctx->arg_len] = '\0';
-            drv->vent_copv(ctx->handler_ctx, strcmp(ctx->arg_buffer, "open") == 0);
+            drv->vent_copv(ctx->handler_ctx, strcmp(ctx->arg_buffer, "on") == 0);
             ctx->state = State_0;
             ctx->arg_len = 0;
         } else if (ctx->arg_len < 32) {
@@ -305,7 +305,7 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_39: {
         if (c == '\n') {
             ctx->arg_buffer[ctx->arg_len] = '\0';
-            drv->vent_lox(ctx->handler_ctx, strcmp(ctx->arg_buffer, "open") == 0);
+            drv->vent_lox(ctx->handler_ctx, strcmp(ctx->arg_buffer, "on") == 0);
             ctx->state = State_0;
             ctx->arg_len = 0;
         } else if (ctx->arg_len < 32) {
@@ -344,7 +344,7 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_44: {
         if (c == '\n') {
             ctx->arg_buffer[ctx->arg_len] = '\0';
-            drv->vent_fuel(ctx->handler_ctx, strcmp(ctx->arg_buffer, "open") == 0);
+            drv->vent_fuel(ctx->handler_ctx, strcmp(ctx->arg_buffer, "on") == 0);
             ctx->state = State_0;
             ctx->arg_len = 0;
         } else if (ctx->arg_len < 32) {
@@ -391,7 +391,7 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_50: {
         if (c == '\n') {
             ctx->arg_buffer[ctx->arg_len] = '\0';
-            drv->pressure_lox(ctx->handler_ctx, strcmp(ctx->arg_buffer, "open") == 0);
+            drv->pressure_lox(ctx->handler_ctx, strcmp(ctx->arg_buffer, "on") == 0);
             ctx->state = State_0;
             ctx->arg_len = 0;
         } else if (ctx->arg_len < 32) {
@@ -430,7 +430,7 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_55: {
         if (c == '\n') {
             ctx->arg_buffer[ctx->arg_len] = '\0';
-            drv->pressure_fuel(ctx->handler_ctx, strcmp(ctx->arg_buffer, "open") == 0);
+            drv->pressure_fuel(ctx->handler_ctx, strcmp(ctx->arg_buffer, "on") == 0);
             ctx->state = State_0;
             ctx->arg_len = 0;
         } else if (ctx->arg_len < 32) {
@@ -880,7 +880,7 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_116: {
         if (c == '\n') {
             ctx->arg_buffer[ctx->arg_len] = '\0';
-            drv->dpr_lox_pressurize(ctx->handler_ctx, strcmp(ctx->arg_buffer, "open") == 0);
+            drv->dpr_lox_pressurize(ctx->handler_ctx, strcmp(ctx->arg_buffer, "on") == 0);
             ctx->state = State_0;
             ctx->arg_len = 0;
         } else if (ctx->arg_len < 32) {
@@ -1124,7 +1124,7 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_149: {
         if (c == '\n') {
             ctx->arg_buffer[ctx->arg_len] = '\0';
-            drv->dpr_eth_pressurize(ctx->handler_ctx, strcmp(ctx->arg_buffer, "open") == 0);
+            drv->dpr_eth_pressurize(ctx->handler_ctx, strcmp(ctx->arg_buffer, "on") == 0);
             ctx->state = State_0;
             ctx->arg_len = 0;
         } else if (ctx->arg_len < 32) {
