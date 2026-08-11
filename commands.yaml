@@ -1,10 +1,6 @@
 pressurize:
-  lox:
-    "%float":
-      "%run": p_lox
-  eth:
-    "%float":
-      "%run": p_eth
+  "%bool":
+    "%run": pressurize
 main:
   lox:
     "%bool":

@@ -203,14 +203,6 @@ enum State {
     State_192,
     State_193,
     State_194,
-    State_195,
-    State_196,
-    State_197,
-    State_198,
-    State_199,
-    State_200,
-    State_201,
-    State_202,
 };
 
 struct driver {
@@ -225,8 +217,6 @@ struct driver {
     void (*dpr_lox_reset)(void* ctx);
     void (*main_fuel)(void* ctx, bool value);
     void (*main_lox)(void* ctx, bool value);
-    void (*p_eth)(void* ctx, float value);
-    void (*p_lox)(void* ctx, float value);
     void (*prc_abort)(void* ctx);
     void (*prc_clear_to_ignite)(void* ctx);
     void (*prc_ignite)(void* ctx);
@@ -234,6 +224,7 @@ struct driver {
     void (*prc_reset)(void* ctx);
     void (*pressure_fuel)(void* ctx, bool value);
     void (*pressure_lox)(void* ctx, bool value);
+    void (*pressurize)(void* ctx, bool value);
     void (*vent_copv)(void* ctx, bool value);
     void (*vent_fuel)(void* ctx, bool value);
     void (*vent_lox)(void* ctx, bool value);
