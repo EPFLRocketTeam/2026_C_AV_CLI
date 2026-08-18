@@ -18,13 +18,20 @@ vent:
   fuel:
     "%bool":
       "%run": vent_fuel
-pressure:
+safety:
   lox:
     "%bool":
-      "%run": pressure_lox
+      "%run": safety_lox
   fuel:
     "%bool":
-      "%run": pressure_fuel
+      "%run": safety_fuel
+ball:
+  lox:
+    "%float":
+      "%run": ball_lox
+  fuel:
+    "%float":
+      "%run": ball_fuel
 prc:
   clear_to_ignite:
     "%void":
@@ -41,6 +48,24 @@ prc:
   abort:
     "%void":
       "%run": prc_abort
+calibrate:
+  "%void":
+    "%run": av_calibrate
+force_calibrated:
+  "%void":
+    "%run": av_force_calibrated
+arm:
+  "%void":
+    "%run": av_arm
+abort:
+  "%void":
+    "%run": av_abort
+recover:
+  "%void":
+    "%run": av_recover
+coldflow:
+  "%void":
+    "%run": prc_coldflow
 dpr:
   lox:
     pressurize:

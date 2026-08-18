@@ -191,9 +191,81 @@ enum State {
     State_180,
     State_181,
     State_182,
+    State_183,
+    State_184,
+    State_185,
+    State_186,
+    State_187,
+    State_188,
+    State_189,
+    State_190,
+    State_191,
+    State_192,
+    State_193,
+    State_194,
+    State_195,
+    State_196,
+    State_197,
+    State_198,
+    State_199,
+    State_200,
+    State_201,
+    State_202,
+    State_203,
+    State_204,
+    State_205,
+    State_206,
+    State_207,
+    State_208,
+    State_209,
+    State_210,
+    State_211,
+    State_212,
+    State_213,
+    State_214,
+    State_215,
+    State_216,
+    State_217,
+    State_218,
+    State_219,
+    State_220,
+    State_221,
+    State_222,
+    State_223,
+    State_224,
+    State_225,
+    State_226,
+    State_227,
+    State_228,
+    State_229,
+    State_230,
+    State_231,
+    State_232,
+    State_233,
+    State_234,
+    State_235,
+    State_236,
+    State_237,
+    State_238,
+    State_239,
+    State_240,
+    State_241,
+    State_242,
+    State_243,
+    State_244,
+    State_245,
+    State_246,
+    State_247,
 };
 
 struct driver {
+    void (*av_abort)(void* ctx);
+    void (*av_arm)(void* ctx);
+    void (*av_calibrate)(void* ctx);
+    void (*av_force_calibrated)(void* ctx);
+    void (*av_recover)(void* ctx);
+    void (*ball_fuel)(void* ctx, float value);
+    void (*ball_lox)(void* ctx, float value);
     void (*dpr_broadcast_abort)(void* ctx);
     void (*dpr_eth_abort)(void* ctx);
     void (*dpr_eth_passivate)(void* ctx);
@@ -207,12 +279,13 @@ struct driver {
     void (*main_lox)(void* ctx, bool value);
     void (*prc_abort)(void* ctx);
     void (*prc_clear_to_ignite)(void* ctx);
+    void (*prc_coldflow)(void* ctx);
     void (*prc_ignite)(void* ctx);
     void (*prc_passivate)(void* ctx);
     void (*prc_reset)(void* ctx);
-    void (*pressure_fuel)(void* ctx, bool value);
-    void (*pressure_lox)(void* ctx, bool value);
     void (*pressurize)(void* ctx, bool value);
+    void (*safety_fuel)(void* ctx, bool value);
+    void (*safety_lox)(void* ctx, bool value);
     void (*vent_copv)(void* ctx, bool value);
     void (*vent_fuel)(void* ctx, bool value);
     void (*vent_lox)(void* ctx, bool value);

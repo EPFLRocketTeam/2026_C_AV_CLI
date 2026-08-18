@@ -18,7 +18,7 @@ import yaml
 
 TYPE_INFO = {
     "float": {"cpp_type": "float", "parse_expr": "strtof(ctx->arg_buffer, nullptr)"},
-    "bool":  {"cpp_type": "bool",  "parse_expr": 'strcmp(ctx->arg_buffer, "on") == 0'},
+    "bool":  {"cpp_type": "bool",  "parse_expr": '(strcmp(ctx->arg_buffer, "open") == 0 || strcmp(ctx->arg_buffer, "on") == 0)'},
     # Zero-argument trigger commands (e.g. "prc ignite"): fires as soon as
     # \n is typed right after the literal path, no argument buffered at
     # all -- cpp_type is None rather than a real type, so the driver

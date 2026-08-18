@@ -7,9 +7,15 @@ void push_char(context* ctx, const driver* drv, char c) {
     switch (ctx->state) {
     case State_0: {
         switch (c) {
-        case 'd': ctx->state = State_98; break;
+        case 'a': ctx->state = State_142; break;
+        case 'b': ctx->state = State_61; break;
+        case 'c': ctx->state = State_117; break;
+        case 'd': ctx->state = State_163; break;
+        case 'f': ctx->state = State_126; break;
         case 'm': ctx->state = State_12; break;
         case 'p': ctx->state = State_1; break;
+        case 'r': ctx->state = State_149; break;
+        case 's': ctx->state = State_45; break;
         case 'v': ctx->state = State_26; break;
         default: ctx->state = State_0; break;
         }
@@ -24,7 +30,7 @@ void push_char(context* ctx, const driver* drv, char c) {
     }
     case State_2: {
         switch (c) {
-        case 'c': ctx->state = State_56; break;
+        case 'c': ctx->state = State_75; break;
         case 'e': ctx->state = State_3; break;
         default: ctx->state = State_0; break;
         }
@@ -60,7 +66,6 @@ void push_char(context* ctx, const driver* drv, char c) {
     }
     case State_7: {
         switch (c) {
-        case 'e': ctx->state = State_45; break;
         case 'i': ctx->state = State_8; break;
         default: ctx->state = State_0; break;
         }
@@ -90,7 +95,7 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_11: {
         if (c == '\n') {
             ctx->arg_buffer[ctx->arg_len] = '\0';
-            drv->pressurize(ctx->handler_ctx, strcmp(ctx->arg_buffer, "on") == 0);
+            drv->pressurize(ctx->handler_ctx, (strcmp(ctx->arg_buffer, "open") == 0 || strcmp(ctx->arg_buffer, "on") == 0));
             ctx->state = State_0;
             ctx->arg_len = 0;
         } else if (ctx->arg_len < 32) {
@@ -158,7 +163,7 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_20: {
         if (c == '\n') {
             ctx->arg_buffer[ctx->arg_len] = '\0';
-            drv->main_lox(ctx->handler_ctx, strcmp(ctx->arg_buffer, "on") == 0);
+            drv->main_lox(ctx->handler_ctx, (strcmp(ctx->arg_buffer, "open") == 0 || strcmp(ctx->arg_buffer, "on") == 0));
             ctx->state = State_0;
             ctx->arg_len = 0;
         } else if (ctx->arg_len < 32) {
@@ -197,7 +202,7 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_25: {
         if (c == '\n') {
             ctx->arg_buffer[ctx->arg_len] = '\0';
-            drv->main_fuel(ctx->handler_ctx, strcmp(ctx->arg_buffer, "on") == 0);
+            drv->main_fuel(ctx->handler_ctx, (strcmp(ctx->arg_buffer, "open") == 0 || strcmp(ctx->arg_buffer, "on") == 0));
             ctx->state = State_0;
             ctx->arg_len = 0;
         } else if (ctx->arg_len < 32) {
@@ -273,7 +278,7 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_35: {
         if (c == '\n') {
             ctx->arg_buffer[ctx->arg_len] = '\0';
-            drv->vent_copv(ctx->handler_ctx, strcmp(ctx->arg_buffer, "on") == 0);
+            drv->vent_copv(ctx->handler_ctx, (strcmp(ctx->arg_buffer, "open") == 0 || strcmp(ctx->arg_buffer, "on") == 0));
             ctx->state = State_0;
             ctx->arg_len = 0;
         } else if (ctx->arg_len < 32) {
@@ -305,7 +310,7 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_39: {
         if (c == '\n') {
             ctx->arg_buffer[ctx->arg_len] = '\0';
-            drv->vent_lox(ctx->handler_ctx, strcmp(ctx->arg_buffer, "on") == 0);
+            drv->vent_lox(ctx->handler_ctx, (strcmp(ctx->arg_buffer, "open") == 0 || strcmp(ctx->arg_buffer, "on") == 0));
             ctx->state = State_0;
             ctx->arg_len = 0;
         } else if (ctx->arg_len < 32) {
@@ -344,7 +349,7 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_44: {
         if (c == '\n') {
             ctx->arg_buffer[ctx->arg_len] = '\0';
-            drv->vent_fuel(ctx->handler_ctx, strcmp(ctx->arg_buffer, "on") == 0);
+            drv->vent_fuel(ctx->handler_ctx, (strcmp(ctx->arg_buffer, "open") == 0 || strcmp(ctx->arg_buffer, "on") == 0));
             ctx->state = State_0;
             ctx->arg_len = 0;
         } else if (ctx->arg_len < 32) {
@@ -354,68 +359,64 @@ void push_char(context* ctx, const driver* drv, char c) {
     }
     case State_45: {
         switch (c) {
-        case ' ': ctx->state = State_46; break;
+        case 'a': ctx->state = State_46; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_46: {
         switch (c) {
-        case 'f': ctx->state = State_51; break;
-        case 'l': ctx->state = State_47; break;
+        case 'f': ctx->state = State_47; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_47: {
         switch (c) {
-        case 'o': ctx->state = State_48; break;
+        case 'e': ctx->state = State_48; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_48: {
         switch (c) {
-        case 'x': ctx->state = State_49; break;
+        case 't': ctx->state = State_49; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_49: {
         switch (c) {
-        case ' ': ctx->state = State_50; break;
+        case 'y': ctx->state = State_50; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_50: {
-        if (c == '\n') {
-            ctx->arg_buffer[ctx->arg_len] = '\0';
-            drv->pressure_lox(ctx->handler_ctx, strcmp(ctx->arg_buffer, "on") == 0);
-            ctx->state = State_0;
-            ctx->arg_len = 0;
-        } else if (ctx->arg_len < 32) {
-            ctx->arg_buffer[ctx->arg_len++] = c;
+        switch (c) {
+        case ' ': ctx->state = State_51; break;
+        default: ctx->state = State_0; break;
         }
         break;
     }
     case State_51: {
         switch (c) {
-        case 'u': ctx->state = State_52; break;
+        case 'f': ctx->state = State_56; break;
+        case 'l': ctx->state = State_52; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_52: {
         switch (c) {
-        case 'e': ctx->state = State_53; break;
+        case 'o': ctx->state = State_53; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_53: {
         switch (c) {
-        case 'l': ctx->state = State_54; break;
+        case 'x': ctx->state = State_54; break;
         default: ctx->state = State_0; break;
         }
         break;
@@ -430,7 +431,7 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_55: {
         if (c == '\n') {
             ctx->arg_buffer[ctx->arg_len] = '\0';
-            drv->pressure_fuel(ctx->handler_ctx, strcmp(ctx->arg_buffer, "on") == 0);
+            drv->safety_lox(ctx->handler_ctx, (strcmp(ctx->arg_buffer, "open") == 0 || strcmp(ctx->arg_buffer, "on") == 0));
             ctx->state = State_0;
             ctx->arg_len = 0;
         } else if (ctx->arg_len < 32) {
@@ -440,18 +441,14 @@ void push_char(context* ctx, const driver* drv, char c) {
     }
     case State_56: {
         switch (c) {
-        case ' ': ctx->state = State_57; break;
+        case 'u': ctx->state = State_57; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_57: {
         switch (c) {
-        case 'a': ctx->state = State_93; break;
-        case 'c': ctx->state = State_58; break;
-        case 'i': ctx->state = State_73; break;
-        case 'p': ctx->state = State_79; break;
-        case 'r': ctx->state = State_88; break;
+        case 'e': ctx->state = State_58; break;
         default: ctx->state = State_0; break;
         }
         break;
@@ -465,84 +462,93 @@ void push_char(context* ctx, const driver* drv, char c) {
     }
     case State_59: {
         switch (c) {
-        case 'e': ctx->state = State_60; break;
+        case ' ': ctx->state = State_60; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_60: {
-        switch (c) {
-        case 'a': ctx->state = State_61; break;
-        default: ctx->state = State_0; break;
+        if (c == '\n') {
+            ctx->arg_buffer[ctx->arg_len] = '\0';
+            drv->safety_fuel(ctx->handler_ctx, (strcmp(ctx->arg_buffer, "open") == 0 || strcmp(ctx->arg_buffer, "on") == 0));
+            ctx->state = State_0;
+            ctx->arg_len = 0;
+        } else if (ctx->arg_len < 32) {
+            ctx->arg_buffer[ctx->arg_len++] = c;
         }
         break;
     }
     case State_61: {
         switch (c) {
-        case 'r': ctx->state = State_62; break;
+        case 'a': ctx->state = State_62; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_62: {
         switch (c) {
-        case '_': ctx->state = State_63; break;
+        case 'l': ctx->state = State_63; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_63: {
         switch (c) {
-        case 't': ctx->state = State_64; break;
+        case 'l': ctx->state = State_64; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_64: {
         switch (c) {
-        case 'o': ctx->state = State_65; break;
+        case ' ': ctx->state = State_65; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_65: {
         switch (c) {
-        case '_': ctx->state = State_66; break;
+        case 'f': ctx->state = State_70; break;
+        case 'l': ctx->state = State_66; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_66: {
         switch (c) {
-        case 'i': ctx->state = State_67; break;
+        case 'o': ctx->state = State_67; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_67: {
         switch (c) {
-        case 'g': ctx->state = State_68; break;
+        case 'x': ctx->state = State_68; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_68: {
         switch (c) {
-        case 'n': ctx->state = State_69; break;
+        case ' ': ctx->state = State_69; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_69: {
-        switch (c) {
-        case 'i': ctx->state = State_70; break;
-        default: ctx->state = State_0; break;
+        if (c == '\n') {
+            ctx->arg_buffer[ctx->arg_len] = '\0';
+            drv->ball_lox(ctx->handler_ctx, strtof(ctx->arg_buffer, nullptr));
+            ctx->state = State_0;
+            ctx->arg_len = 0;
+        } else if (ctx->arg_len < 32) {
+            ctx->arg_buffer[ctx->arg_len++] = c;
         }
         break;
     }
     case State_70: {
         switch (c) {
-        case 't': ctx->state = State_71; break;
+        case 'u': ctx->state = State_71; break;
         default: ctx->state = State_0; break;
         }
         break;
@@ -555,55 +561,59 @@ void push_char(context* ctx, const driver* drv, char c) {
         break;
     }
     case State_72: {
-        if (c == '\n') {
-            drv->prc_clear_to_ignite(ctx->handler_ctx);
-            ctx->state = State_0;
-        } else {
-            ctx->state = State_0;
+        switch (c) {
+        case 'l': ctx->state = State_73; break;
+        default: ctx->state = State_0; break;
         }
         break;
     }
     case State_73: {
         switch (c) {
-        case 'g': ctx->state = State_74; break;
+        case ' ': ctx->state = State_74; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_74: {
-        switch (c) {
-        case 'n': ctx->state = State_75; break;
-        default: ctx->state = State_0; break;
+        if (c == '\n') {
+            ctx->arg_buffer[ctx->arg_len] = '\0';
+            drv->ball_fuel(ctx->handler_ctx, strtof(ctx->arg_buffer, nullptr));
+            ctx->state = State_0;
+            ctx->arg_len = 0;
+        } else if (ctx->arg_len < 32) {
+            ctx->arg_buffer[ctx->arg_len++] = c;
         }
         break;
     }
     case State_75: {
         switch (c) {
-        case 'i': ctx->state = State_76; break;
+        case ' ': ctx->state = State_76; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_76: {
         switch (c) {
-        case 't': ctx->state = State_77; break;
+        case 'a': ctx->state = State_112; break;
+        case 'c': ctx->state = State_77; break;
+        case 'i': ctx->state = State_92; break;
+        case 'p': ctx->state = State_98; break;
+        case 'r': ctx->state = State_107; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_77: {
         switch (c) {
-        case 'e': ctx->state = State_78; break;
+        case 'l': ctx->state = State_78; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_78: {
-        if (c == '\n') {
-            drv->prc_ignite(ctx->handler_ctx);
-            ctx->state = State_0;
-        } else {
-            ctx->state = State_0;
+        switch (c) {
+        case 'e': ctx->state = State_79; break;
+        default: ctx->state = State_0; break;
         }
         break;
     }
@@ -616,72 +626,70 @@ void push_char(context* ctx, const driver* drv, char c) {
     }
     case State_80: {
         switch (c) {
-        case 's': ctx->state = State_81; break;
+        case 'r': ctx->state = State_81; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_81: {
         switch (c) {
-        case 's': ctx->state = State_82; break;
+        case '_': ctx->state = State_82; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_82: {
         switch (c) {
-        case 'i': ctx->state = State_83; break;
+        case 't': ctx->state = State_83; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_83: {
         switch (c) {
-        case 'v': ctx->state = State_84; break;
+        case 'o': ctx->state = State_84; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_84: {
         switch (c) {
-        case 'a': ctx->state = State_85; break;
+        case '_': ctx->state = State_85; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_85: {
         switch (c) {
-        case 't': ctx->state = State_86; break;
+        case 'i': ctx->state = State_86; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_86: {
         switch (c) {
-        case 'e': ctx->state = State_87; break;
+        case 'g': ctx->state = State_87; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_87: {
-        if (c == '\n') {
-            drv->prc_passivate(ctx->handler_ctx);
-            ctx->state = State_0;
-        } else {
-            ctx->state = State_0;
+        switch (c) {
+        case 'n': ctx->state = State_88; break;
+        default: ctx->state = State_0; break;
         }
         break;
     }
     case State_88: {
         switch (c) {
-        case 'e': ctx->state = State_89; break;
+        case 'i': ctx->state = State_89; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_89: {
         switch (c) {
-        case 's': ctx->state = State_90; break;
+        case 't': ctx->state = State_90; break;
         default: ctx->state = State_0; break;
         }
         break;
@@ -694,52 +702,52 @@ void push_char(context* ctx, const driver* drv, char c) {
         break;
     }
     case State_91: {
-        switch (c) {
-        case 't': ctx->state = State_92; break;
-        default: ctx->state = State_0; break;
-        }
-        break;
-    }
-    case State_92: {
         if (c == '\n') {
-            drv->prc_reset(ctx->handler_ctx);
+            drv->prc_clear_to_ignite(ctx->handler_ctx);
             ctx->state = State_0;
         } else {
             ctx->state = State_0;
         }
         break;
     }
+    case State_92: {
+        switch (c) {
+        case 'g': ctx->state = State_93; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
     case State_93: {
         switch (c) {
-        case 'b': ctx->state = State_94; break;
+        case 'n': ctx->state = State_94; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_94: {
         switch (c) {
-        case 'o': ctx->state = State_95; break;
+        case 'i': ctx->state = State_95; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_95: {
         switch (c) {
-        case 'r': ctx->state = State_96; break;
+        case 't': ctx->state = State_96; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_96: {
         switch (c) {
-        case 't': ctx->state = State_97; break;
+        case 'e': ctx->state = State_97; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_97: {
         if (c == '\n') {
-            drv->prc_abort(ctx->handler_ctx);
+            drv->prc_ignite(ctx->handler_ctx);
             ctx->state = State_0;
         } else {
             ctx->state = State_0;
@@ -748,69 +756,66 @@ void push_char(context* ctx, const driver* drv, char c) {
     }
     case State_98: {
         switch (c) {
-        case 'p': ctx->state = State_99; break;
+        case 'a': ctx->state = State_99; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_99: {
         switch (c) {
-        case 'r': ctx->state = State_100; break;
+        case 's': ctx->state = State_100; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_100: {
         switch (c) {
-        case ' ': ctx->state = State_101; break;
+        case 's': ctx->state = State_101; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_101: {
         switch (c) {
-        case 'b': ctx->state = State_168; break;
-        case 'e': ctx->state = State_135; break;
-        case 'l': ctx->state = State_102; break;
+        case 'i': ctx->state = State_102; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_102: {
         switch (c) {
-        case 'o': ctx->state = State_103; break;
+        case 'v': ctx->state = State_103; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_103: {
         switch (c) {
-        case 'x': ctx->state = State_104; break;
+        case 'a': ctx->state = State_104; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_104: {
         switch (c) {
-        case ' ': ctx->state = State_105; break;
+        case 't': ctx->state = State_105; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_105: {
         switch (c) {
-        case 'a': ctx->state = State_117; break;
-        case 'p': ctx->state = State_106; break;
-        case 'r': ctx->state = State_130; break;
+        case 'e': ctx->state = State_106; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_106: {
-        switch (c) {
-        case 'a': ctx->state = State_122; break;
-        case 'r': ctx->state = State_107; break;
-        default: ctx->state = State_0; break;
+        if (c == '\n') {
+            drv->prc_passivate(ctx->handler_ctx);
+            ctx->state = State_0;
+        } else {
+            ctx->state = State_0;
         }
         break;
     }
@@ -830,311 +835,308 @@ void push_char(context* ctx, const driver* drv, char c) {
     }
     case State_109: {
         switch (c) {
-        case 's': ctx->state = State_110; break;
+        case 'e': ctx->state = State_110; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_110: {
         switch (c) {
-        case 'u': ctx->state = State_111; break;
+        case 't': ctx->state = State_111; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_111: {
-        switch (c) {
-        case 'r': ctx->state = State_112; break;
-        default: ctx->state = State_0; break;
+        if (c == '\n') {
+            drv->prc_reset(ctx->handler_ctx);
+            ctx->state = State_0;
+        } else {
+            ctx->state = State_0;
         }
         break;
     }
     case State_112: {
         switch (c) {
-        case 'i': ctx->state = State_113; break;
+        case 'b': ctx->state = State_113; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_113: {
         switch (c) {
-        case 'z': ctx->state = State_114; break;
+        case 'o': ctx->state = State_114; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_114: {
         switch (c) {
-        case 'e': ctx->state = State_115; break;
+        case 'r': ctx->state = State_115; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_115: {
         switch (c) {
-        case ' ': ctx->state = State_116; break;
+        case 't': ctx->state = State_116; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_116: {
         if (c == '\n') {
-            ctx->arg_buffer[ctx->arg_len] = '\0';
-            drv->dpr_lox_pressurize(ctx->handler_ctx, strcmp(ctx->arg_buffer, "on") == 0);
+            drv->prc_abort(ctx->handler_ctx);
             ctx->state = State_0;
-            ctx->arg_len = 0;
-        } else if (ctx->arg_len < 32) {
-            ctx->arg_buffer[ctx->arg_len++] = c;
+        } else {
+            ctx->state = State_0;
         }
         break;
     }
     case State_117: {
         switch (c) {
-        case 'b': ctx->state = State_118; break;
+        case 'a': ctx->state = State_118; break;
+        case 'o': ctx->state = State_156; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_118: {
         switch (c) {
-        case 'o': ctx->state = State_119; break;
+        case 'l': ctx->state = State_119; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_119: {
         switch (c) {
-        case 'r': ctx->state = State_120; break;
+        case 'i': ctx->state = State_120; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_120: {
         switch (c) {
-        case 't': ctx->state = State_121; break;
+        case 'b': ctx->state = State_121; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_121: {
-        if (c == '\n') {
-            drv->dpr_lox_abort(ctx->handler_ctx);
-            ctx->state = State_0;
-        } else {
-            ctx->state = State_0;
+        switch (c) {
+        case 'r': ctx->state = State_122; break;
+        default: ctx->state = State_0; break;
         }
         break;
     }
     case State_122: {
         switch (c) {
-        case 's': ctx->state = State_123; break;
+        case 'a': ctx->state = State_123; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_123: {
         switch (c) {
-        case 's': ctx->state = State_124; break;
+        case 't': ctx->state = State_124; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_124: {
         switch (c) {
-        case 'i': ctx->state = State_125; break;
+        case 'e': ctx->state = State_125; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_125: {
-        switch (c) {
-        case 'v': ctx->state = State_126; break;
-        default: ctx->state = State_0; break;
+        if (c == '\n') {
+            drv->av_calibrate(ctx->handler_ctx);
+            ctx->state = State_0;
+        } else {
+            ctx->state = State_0;
         }
         break;
     }
     case State_126: {
         switch (c) {
-        case 'a': ctx->state = State_127; break;
+        case 'o': ctx->state = State_127; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_127: {
         switch (c) {
-        case 't': ctx->state = State_128; break;
+        case 'r': ctx->state = State_128; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_128: {
         switch (c) {
-        case 'e': ctx->state = State_129; break;
+        case 'c': ctx->state = State_129; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_129: {
-        if (c == '\n') {
-            drv->dpr_lox_passivate(ctx->handler_ctx);
-            ctx->state = State_0;
-        } else {
-            ctx->state = State_0;
+        switch (c) {
+        case 'e': ctx->state = State_130; break;
+        default: ctx->state = State_0; break;
         }
         break;
     }
     case State_130: {
         switch (c) {
-        case 'e': ctx->state = State_131; break;
+        case '_': ctx->state = State_131; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_131: {
         switch (c) {
-        case 's': ctx->state = State_132; break;
+        case 'c': ctx->state = State_132; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_132: {
         switch (c) {
-        case 'e': ctx->state = State_133; break;
+        case 'a': ctx->state = State_133; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_133: {
         switch (c) {
-        case 't': ctx->state = State_134; break;
+        case 'l': ctx->state = State_134; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_134: {
-        if (c == '\n') {
-            drv->dpr_lox_reset(ctx->handler_ctx);
-            ctx->state = State_0;
-        } else {
-            ctx->state = State_0;
+        switch (c) {
+        case 'i': ctx->state = State_135; break;
+        default: ctx->state = State_0; break;
         }
         break;
     }
     case State_135: {
         switch (c) {
-        case 't': ctx->state = State_136; break;
+        case 'b': ctx->state = State_136; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_136: {
         switch (c) {
-        case 'h': ctx->state = State_137; break;
+        case 'r': ctx->state = State_137; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_137: {
         switch (c) {
-        case ' ': ctx->state = State_138; break;
+        case 'a': ctx->state = State_138; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_138: {
         switch (c) {
-        case 'a': ctx->state = State_150; break;
-        case 'p': ctx->state = State_139; break;
-        case 'r': ctx->state = State_163; break;
+        case 't': ctx->state = State_139; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_139: {
         switch (c) {
-        case 'a': ctx->state = State_155; break;
-        case 'r': ctx->state = State_140; break;
+        case 'e': ctx->state = State_140; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_140: {
         switch (c) {
-        case 'e': ctx->state = State_141; break;
+        case 'd': ctx->state = State_141; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_141: {
-        switch (c) {
-        case 's': ctx->state = State_142; break;
-        default: ctx->state = State_0; break;
+        if (c == '\n') {
+            drv->av_force_calibrated(ctx->handler_ctx);
+            ctx->state = State_0;
+        } else {
+            ctx->state = State_0;
         }
         break;
     }
     case State_142: {
         switch (c) {
-        case 's': ctx->state = State_143; break;
+        case 'b': ctx->state = State_145; break;
+        case 'r': ctx->state = State_143; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_143: {
         switch (c) {
-        case 'u': ctx->state = State_144; break;
+        case 'm': ctx->state = State_144; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_144: {
-        switch (c) {
-        case 'r': ctx->state = State_145; break;
-        default: ctx->state = State_0; break;
+        if (c == '\n') {
+            drv->av_arm(ctx->handler_ctx);
+            ctx->state = State_0;
+        } else {
+            ctx->state = State_0;
         }
         break;
     }
     case State_145: {
         switch (c) {
-        case 'i': ctx->state = State_146; break;
+        case 'o': ctx->state = State_146; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_146: {
         switch (c) {
-        case 'z': ctx->state = State_147; break;
+        case 'r': ctx->state = State_147; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_147: {
         switch (c) {
-        case 'e': ctx->state = State_148; break;
+        case 't': ctx->state = State_148; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_148: {
-        switch (c) {
-        case ' ': ctx->state = State_149; break;
-        default: ctx->state = State_0; break;
+        if (c == '\n') {
+            drv->av_abort(ctx->handler_ctx);
+            ctx->state = State_0;
+        } else {
+            ctx->state = State_0;
         }
         break;
     }
     case State_149: {
-        if (c == '\n') {
-            ctx->arg_buffer[ctx->arg_len] = '\0';
-            drv->dpr_eth_pressurize(ctx->handler_ctx, strcmp(ctx->arg_buffer, "on") == 0);
-            ctx->state = State_0;
-            ctx->arg_len = 0;
-        } else if (ctx->arg_len < 32) {
-            ctx->arg_buffer[ctx->arg_len++] = c;
+        switch (c) {
+        case 'e': ctx->state = State_150; break;
+        default: ctx->state = State_0; break;
         }
         break;
     }
     case State_150: {
         switch (c) {
-        case 'b': ctx->state = State_151; break;
+        case 'c': ctx->state = State_151; break;
         default: ctx->state = State_0; break;
         }
         break;
@@ -1148,79 +1150,79 @@ void push_char(context* ctx, const driver* drv, char c) {
     }
     case State_152: {
         switch (c) {
-        case 'r': ctx->state = State_153; break;
+        case 'v': ctx->state = State_153; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_153: {
         switch (c) {
-        case 't': ctx->state = State_154; break;
+        case 'e': ctx->state = State_154; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_154: {
+        switch (c) {
+        case 'r': ctx->state = State_155; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_155: {
         if (c == '\n') {
-            drv->dpr_eth_abort(ctx->handler_ctx);
+            drv->av_recover(ctx->handler_ctx);
             ctx->state = State_0;
         } else {
             ctx->state = State_0;
         }
         break;
     }
-    case State_155: {
-        switch (c) {
-        case 's': ctx->state = State_156; break;
-        default: ctx->state = State_0; break;
-        }
-        break;
-    }
     case State_156: {
         switch (c) {
-        case 's': ctx->state = State_157; break;
+        case 'l': ctx->state = State_157; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_157: {
         switch (c) {
-        case 'i': ctx->state = State_158; break;
+        case 'd': ctx->state = State_158; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_158: {
         switch (c) {
-        case 'v': ctx->state = State_159; break;
+        case 'f': ctx->state = State_159; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_159: {
         switch (c) {
-        case 'a': ctx->state = State_160; break;
+        case 'l': ctx->state = State_160; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_160: {
         switch (c) {
-        case 't': ctx->state = State_161; break;
+        case 'o': ctx->state = State_161; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_161: {
         switch (c) {
-        case 'e': ctx->state = State_162; break;
+        case 'w': ctx->state = State_162; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_162: {
         if (c == '\n') {
-            drv->dpr_eth_passivate(ctx->handler_ctx);
+            drv->prc_coldflow(ctx->handler_ctx);
             ctx->state = State_0;
         } else {
             ctx->state = State_0;
@@ -1229,79 +1231,82 @@ void push_char(context* ctx, const driver* drv, char c) {
     }
     case State_163: {
         switch (c) {
-        case 'e': ctx->state = State_164; break;
+        case 'p': ctx->state = State_164; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_164: {
         switch (c) {
-        case 's': ctx->state = State_165; break;
+        case 'r': ctx->state = State_165; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_165: {
         switch (c) {
-        case 'e': ctx->state = State_166; break;
+        case ' ': ctx->state = State_166; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_166: {
         switch (c) {
-        case 't': ctx->state = State_167; break;
+        case 'b': ctx->state = State_233; break;
+        case 'e': ctx->state = State_200; break;
+        case 'l': ctx->state = State_167; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_167: {
-        if (c == '\n') {
-            drv->dpr_eth_reset(ctx->handler_ctx);
-            ctx->state = State_0;
-        } else {
-            ctx->state = State_0;
+        switch (c) {
+        case 'o': ctx->state = State_168; break;
+        default: ctx->state = State_0; break;
         }
         break;
     }
     case State_168: {
         switch (c) {
-        case 'r': ctx->state = State_169; break;
+        case 'x': ctx->state = State_169; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_169: {
         switch (c) {
-        case 'o': ctx->state = State_170; break;
+        case ' ': ctx->state = State_170; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_170: {
         switch (c) {
-        case 'a': ctx->state = State_171; break;
+        case 'a': ctx->state = State_182; break;
+        case 'p': ctx->state = State_171; break;
+        case 'r': ctx->state = State_195; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_171: {
         switch (c) {
-        case 'd': ctx->state = State_172; break;
+        case 'a': ctx->state = State_187; break;
+        case 'r': ctx->state = State_172; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_172: {
         switch (c) {
-        case 'c': ctx->state = State_173; break;
+        case 'e': ctx->state = State_173; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_173: {
         switch (c) {
-        case 'a': ctx->state = State_174; break;
+        case 's': ctx->state = State_174; break;
         default: ctx->state = State_0; break;
         }
         break;
@@ -1315,54 +1320,532 @@ void push_char(context* ctx, const driver* drv, char c) {
     }
     case State_175: {
         switch (c) {
-        case 't': ctx->state = State_176; break;
+        case 'u': ctx->state = State_176; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_176: {
         switch (c) {
-        case '_': ctx->state = State_177; break;
+        case 'r': ctx->state = State_177; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_177: {
         switch (c) {
-        case 'a': ctx->state = State_178; break;
+        case 'i': ctx->state = State_178; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_178: {
         switch (c) {
-        case 'b': ctx->state = State_179; break;
+        case 'z': ctx->state = State_179; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_179: {
         switch (c) {
-        case 'o': ctx->state = State_180; break;
+        case 'e': ctx->state = State_180; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_180: {
         switch (c) {
-        case 'r': ctx->state = State_181; break;
+        case ' ': ctx->state = State_181; break;
         default: ctx->state = State_0; break;
         }
         break;
     }
     case State_181: {
-        switch (c) {
-        case 't': ctx->state = State_182; break;
-        default: ctx->state = State_0; break;
+        if (c == '\n') {
+            ctx->arg_buffer[ctx->arg_len] = '\0';
+            drv->dpr_lox_pressurize(ctx->handler_ctx, (strcmp(ctx->arg_buffer, "open") == 0 || strcmp(ctx->arg_buffer, "on") == 0));
+            ctx->state = State_0;
+            ctx->arg_len = 0;
+        } else if (ctx->arg_len < 32) {
+            ctx->arg_buffer[ctx->arg_len++] = c;
         }
         break;
     }
     case State_182: {
+        switch (c) {
+        case 'b': ctx->state = State_183; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_183: {
+        switch (c) {
+        case 'o': ctx->state = State_184; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_184: {
+        switch (c) {
+        case 'r': ctx->state = State_185; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_185: {
+        switch (c) {
+        case 't': ctx->state = State_186; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_186: {
+        if (c == '\n') {
+            drv->dpr_lox_abort(ctx->handler_ctx);
+            ctx->state = State_0;
+        } else {
+            ctx->state = State_0;
+        }
+        break;
+    }
+    case State_187: {
+        switch (c) {
+        case 's': ctx->state = State_188; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_188: {
+        switch (c) {
+        case 's': ctx->state = State_189; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_189: {
+        switch (c) {
+        case 'i': ctx->state = State_190; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_190: {
+        switch (c) {
+        case 'v': ctx->state = State_191; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_191: {
+        switch (c) {
+        case 'a': ctx->state = State_192; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_192: {
+        switch (c) {
+        case 't': ctx->state = State_193; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_193: {
+        switch (c) {
+        case 'e': ctx->state = State_194; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_194: {
+        if (c == '\n') {
+            drv->dpr_lox_passivate(ctx->handler_ctx);
+            ctx->state = State_0;
+        } else {
+            ctx->state = State_0;
+        }
+        break;
+    }
+    case State_195: {
+        switch (c) {
+        case 'e': ctx->state = State_196; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_196: {
+        switch (c) {
+        case 's': ctx->state = State_197; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_197: {
+        switch (c) {
+        case 'e': ctx->state = State_198; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_198: {
+        switch (c) {
+        case 't': ctx->state = State_199; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_199: {
+        if (c == '\n') {
+            drv->dpr_lox_reset(ctx->handler_ctx);
+            ctx->state = State_0;
+        } else {
+            ctx->state = State_0;
+        }
+        break;
+    }
+    case State_200: {
+        switch (c) {
+        case 't': ctx->state = State_201; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_201: {
+        switch (c) {
+        case 'h': ctx->state = State_202; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_202: {
+        switch (c) {
+        case ' ': ctx->state = State_203; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_203: {
+        switch (c) {
+        case 'a': ctx->state = State_215; break;
+        case 'p': ctx->state = State_204; break;
+        case 'r': ctx->state = State_228; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_204: {
+        switch (c) {
+        case 'a': ctx->state = State_220; break;
+        case 'r': ctx->state = State_205; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_205: {
+        switch (c) {
+        case 'e': ctx->state = State_206; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_206: {
+        switch (c) {
+        case 's': ctx->state = State_207; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_207: {
+        switch (c) {
+        case 's': ctx->state = State_208; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_208: {
+        switch (c) {
+        case 'u': ctx->state = State_209; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_209: {
+        switch (c) {
+        case 'r': ctx->state = State_210; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_210: {
+        switch (c) {
+        case 'i': ctx->state = State_211; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_211: {
+        switch (c) {
+        case 'z': ctx->state = State_212; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_212: {
+        switch (c) {
+        case 'e': ctx->state = State_213; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_213: {
+        switch (c) {
+        case ' ': ctx->state = State_214; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_214: {
+        if (c == '\n') {
+            ctx->arg_buffer[ctx->arg_len] = '\0';
+            drv->dpr_eth_pressurize(ctx->handler_ctx, (strcmp(ctx->arg_buffer, "open") == 0 || strcmp(ctx->arg_buffer, "on") == 0));
+            ctx->state = State_0;
+            ctx->arg_len = 0;
+        } else if (ctx->arg_len < 32) {
+            ctx->arg_buffer[ctx->arg_len++] = c;
+        }
+        break;
+    }
+    case State_215: {
+        switch (c) {
+        case 'b': ctx->state = State_216; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_216: {
+        switch (c) {
+        case 'o': ctx->state = State_217; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_217: {
+        switch (c) {
+        case 'r': ctx->state = State_218; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_218: {
+        switch (c) {
+        case 't': ctx->state = State_219; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_219: {
+        if (c == '\n') {
+            drv->dpr_eth_abort(ctx->handler_ctx);
+            ctx->state = State_0;
+        } else {
+            ctx->state = State_0;
+        }
+        break;
+    }
+    case State_220: {
+        switch (c) {
+        case 's': ctx->state = State_221; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_221: {
+        switch (c) {
+        case 's': ctx->state = State_222; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_222: {
+        switch (c) {
+        case 'i': ctx->state = State_223; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_223: {
+        switch (c) {
+        case 'v': ctx->state = State_224; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_224: {
+        switch (c) {
+        case 'a': ctx->state = State_225; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_225: {
+        switch (c) {
+        case 't': ctx->state = State_226; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_226: {
+        switch (c) {
+        case 'e': ctx->state = State_227; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_227: {
+        if (c == '\n') {
+            drv->dpr_eth_passivate(ctx->handler_ctx);
+            ctx->state = State_0;
+        } else {
+            ctx->state = State_0;
+        }
+        break;
+    }
+    case State_228: {
+        switch (c) {
+        case 'e': ctx->state = State_229; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_229: {
+        switch (c) {
+        case 's': ctx->state = State_230; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_230: {
+        switch (c) {
+        case 'e': ctx->state = State_231; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_231: {
+        switch (c) {
+        case 't': ctx->state = State_232; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_232: {
+        if (c == '\n') {
+            drv->dpr_eth_reset(ctx->handler_ctx);
+            ctx->state = State_0;
+        } else {
+            ctx->state = State_0;
+        }
+        break;
+    }
+    case State_233: {
+        switch (c) {
+        case 'r': ctx->state = State_234; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_234: {
+        switch (c) {
+        case 'o': ctx->state = State_235; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_235: {
+        switch (c) {
+        case 'a': ctx->state = State_236; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_236: {
+        switch (c) {
+        case 'd': ctx->state = State_237; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_237: {
+        switch (c) {
+        case 'c': ctx->state = State_238; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_238: {
+        switch (c) {
+        case 'a': ctx->state = State_239; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_239: {
+        switch (c) {
+        case 's': ctx->state = State_240; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_240: {
+        switch (c) {
+        case 't': ctx->state = State_241; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_241: {
+        switch (c) {
+        case '_': ctx->state = State_242; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_242: {
+        switch (c) {
+        case 'a': ctx->state = State_243; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_243: {
+        switch (c) {
+        case 'b': ctx->state = State_244; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_244: {
+        switch (c) {
+        case 'o': ctx->state = State_245; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_245: {
+        switch (c) {
+        case 'r': ctx->state = State_246; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_246: {
+        switch (c) {
+        case 't': ctx->state = State_247; break;
+        default: ctx->state = State_0; break;
+        }
+        break;
+    }
+    case State_247: {
         if (c == '\n') {
             drv->dpr_broadcast_abort(ctx->handler_ctx);
             ctx->state = State_0;
