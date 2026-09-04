@@ -3873,7 +3873,7 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_521: {
         if (c == '\n') {
             ctx->arg_buffer[ctx->arg_len] = '\0';
-            drv->config_burn_cutoff_delay(ctx->handler_ctx, strtol(ctx->arg_buffer, nullptr, 10));
+            drv->config_burn_min_duration(ctx->handler_ctx, strtol(ctx->arg_buffer, nullptr, 10));
             ctx->state = State_0;
             ctx->arg_len = 0;
         } else if (ctx->arg_len < 32) {

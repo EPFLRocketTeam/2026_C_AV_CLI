@@ -174,7 +174,7 @@ config:
         "%run": config_burn_cutoff_delay
     min_duration:
       "%int": 
-        "%run": config_burn_cutoff_delay
+        "%run": config_burn_min_duration
     impulse:
       "%float": 
         "%run": config_burn_impulse

@@ -604,6 +604,7 @@ struct driver {
     void (*config_burn_impulse)(void* ctx, float value);
     void (*config_burn_max_duration_engine)(void* ctx, int value);
     void (*config_burn_max_duration_fc)(void* ctx, int value);
+    void (*config_burn_min_duration)(void* ctx, int value);
     void (*config_commit)(void* ctx);
     void (*config_ignition_delay)(void* ctx, int value);
     void (*config_ignition_igniter_duration)(void* ctx, int value);
