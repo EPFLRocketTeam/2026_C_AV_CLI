@@ -17,6 +17,7 @@ import sys
 import yaml
 
 TYPE_INFO = {
+    "int":   {"cpp_type": "int", "parse_expr": "strtol(ctx->arg_buffer, nullptr, 10)"},
     "float": {"cpp_type": "float", "parse_expr": "strtof(ctx->arg_buffer, nullptr)"},
     "bool":  {"cpp_type": "bool",  "parse_expr": '(strcmp(ctx->arg_buffer, "open") == 0 || strcmp(ctx->arg_buffer, "on") == 0)'},
     # Zero-argument trigger commands (e.g. "prc ignite"): fires as soon as

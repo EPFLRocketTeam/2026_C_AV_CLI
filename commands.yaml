@@ -96,3 +96,106 @@ dpr:
   broadcast_abort:
     "%void":
       "%run": dpr_broadcast_abort
+  
+# === LOGGING ===
+logs:
+  can:
+    fc:
+      "%bool":
+        "%run": logs_can_fc
+    eth:
+      "%bool":
+        "%run": logs_can_eth
+    lox:
+      "%bool":
+        "%run": logs_can_lox
+    engine:
+      "%bool":
+        "%run": logs_can_engine
+  usb:
+    fc:
+      "%bool":
+        "%run": logs_usb_fc
+    eth:
+      "%bool":
+        "%run": logs_usb_eth
+    lox:
+      "%bool":
+        "%run": logs_usb_lox
+    engine:
+      "%bool":
+        "%run": logs_usb_engine
+
+# Setup configuration of the Flight Computer
+config:
+  # === PRESSURIZE ===
+  pressurize:
+    hold_delay:
+      "%int": 
+        "%run": config_pressurize_hold_delay
+    lox_set_pressure:
+      "%float": 
+        "%run": config_pressurize_lox_set_pressure
+    fuel_set_pressure:
+      "%float": 
+        "%run": config_pressurize_fuel_set_pressure
+    ramp_up_duration:
+      "%int":
+        "%run": config_pressurize_ramp_up_duration
+    max_critical_pressure:
+      "%float":
+        "%run": config_pressurize_max_critical_pressure
+    max_nominal_pressure:
+      "%float":
+        "%run": config_pressurize_max_nominal_pressure
+    min_nominal_pressure:
+      "%float":
+        "%run": config_pressurize_min_nominal_pressure
+  
+  # === IGNITION ===
+  ignition:
+    prechill_duration:
+      "%int": 
+        "%run": config_ignition_prechill_duration
+    igniter_duration:
+      "%int": 
+        "%run": config_ignition_igniter_duration
+    delay:
+      "%int": 
+        "%run": config_ignition_delay
+    ramp_up:
+      "%int": 
+        "%run": config_ignition_ramp_up
+  
+  # === BURN ===
+  burn:
+    cutoff_delay:
+      "%int": 
+        "%run": config_burn_cutoff_delay
+    min_duration:
+      "%int": 
+        "%run": config_burn_cutoff_delay
+    impulse:
+      "%float": 
+        "%run": config_burn_impulse
+    max_duration:
+      fc:
+        "%int": 
+          "%run": config_burn_max_duration_fc
+      engine:
+        "%int": 
+          "%run": config_burn_max_duration_engine
+  
+  print:
+    buffer:
+      "%void":
+        "%run": config_print_buffer
+    commited:
+      "%void":
+        "%run": config_print_commited
+    status:
+      "%void":
+        "%run": config_print_status
+  commit:
+    "%void":
+      "%run": config_commit
