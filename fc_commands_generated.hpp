@@ -618,10 +618,10 @@ struct driver {
     void (*config_ignition_prechill_duration)(void* ctx, int value);
     void (*config_ignition_ramp_up)(void* ctx, int value);
     void (*config_pressurize_hold_delay)(void* ctx, int value);
-    void (*config_pressurize_max_lox_nominal_pressure)(void* ctx, int value);
-    void (*config_pressurize_min_lox_nominal_pressure)(void* ctx, int value);
-    void (*config_pressurize_rmax_fuel_nominal_pressure)(void* ctx, int value);
-    void (*config_pressurize_rmin_fuel_nominal_pressure)(void* ctx, int value);
+    void (*config_pressurize_max_fuel_nominal_pressure)(void* ctx, float value);
+    void (*config_pressurize_max_lox_nominal_pressure)(void* ctx, float value);
+    void (*config_pressurize_min_fuel_nominal_pressure)(void* ctx, float value);
+    void (*config_pressurize_min_lox_nominal_pressure)(void* ctx, float value);
     void (*config_pressurize_target_pressure_fuel)(void* ctx, float value);
     void (*config_pressurize_target_pressure_lox)(void* ctx, float value);
     void (*config_print_buffer)(void* ctx);

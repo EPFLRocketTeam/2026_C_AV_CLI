@@ -140,17 +140,17 @@ config:
       "%float": 
         "%run": config_pressurize_target_pressure_fuel
     max_lox_nominal_pressure:
-      "%int":
+      "%float":
         "%run": config_pressurize_max_lox_nominal_pressure
     min_lox_nominal_pressure:
-      "%int":
+      "%float":
         "%run": config_pressurize_min_lox_nominal_pressure
     max_fuel_nominal_pressure:
-      "%int":
-        "%run": config_pressurize_rmax_fuel_nominal_pressure
+      "%float":
+        "%run": config_pressurize_max_fuel_nominal_pressure
     min_fuel_nominal_pressure:
-      "%int":
-        "%run": config_pressurize_rmin_fuel_nominal_pressure
+      "%float":
+        "%run": config_pressurize_min_fuel_nominal_pressure
   
   # === IGNITION ===
   ignition:

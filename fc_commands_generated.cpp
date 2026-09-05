@@ -2780,7 +2780,7 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_371: {
         if (c == '\n') {
             ctx->arg_buffer[ctx->arg_len] = '\0';
-            drv->config_pressurize_max_lox_nominal_pressure(ctx->handler_ctx, strtol(ctx->arg_buffer, nullptr, 10));
+            drv->config_pressurize_max_lox_nominal_pressure(ctx->handler_ctx, strtof(ctx->arg_buffer, nullptr));
             ctx->state = State_0;
             ctx->arg_len = 0;
         } else if (ctx->arg_len < 32) {
@@ -2953,7 +2953,7 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_395: {
         if (c == '\n') {
             ctx->arg_buffer[ctx->arg_len] = '\0';
-            drv->config_pressurize_min_lox_nominal_pressure(ctx->handler_ctx, strtol(ctx->arg_buffer, nullptr, 10));
+            drv->config_pressurize_min_lox_nominal_pressure(ctx->handler_ctx, strtof(ctx->arg_buffer, nullptr));
             ctx->state = State_0;
             ctx->arg_len = 0;
         } else if (ctx->arg_len < 32) {
@@ -3111,7 +3111,7 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_417: {
         if (c == '\n') {
             ctx->arg_buffer[ctx->arg_len] = '\0';
-            drv->config_pressurize_rmax_fuel_nominal_pressure(ctx->handler_ctx, strtol(ctx->arg_buffer, nullptr, 10));
+            drv->config_pressurize_max_fuel_nominal_pressure(ctx->handler_ctx, strtof(ctx->arg_buffer, nullptr));
             ctx->state = State_0;
             ctx->arg_len = 0;
         } else if (ctx->arg_len < 32) {
@@ -3269,7 +3269,7 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_439: {
         if (c == '\n') {
             ctx->arg_buffer[ctx->arg_len] = '\0';
-            drv->config_pressurize_rmin_fuel_nominal_pressure(ctx->handler_ctx, strtol(ctx->arg_buffer, nullptr, 10));
+            drv->config_pressurize_min_fuel_nominal_pressure(ctx->handler_ctx, strtof(ctx->arg_buffer, nullptr));
             ctx->state = State_0;
             ctx->arg_len = 0;
         } else if (ctx->arg_len < 32) {
