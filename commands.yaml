@@ -133,24 +133,24 @@ config:
     hold_delay:
       "%int": 
         "%run": config_pressurize_hold_delay
-    lox_set_pressure:
+    target_pressure_lox:
       "%float": 
-        "%run": config_pressurize_lox_set_pressure
-    fuel_set_pressure:
+        "%run": config_pressurize_target_pressure_lox
+    target_pressure_fuel:
       "%float": 
-        "%run": config_pressurize_fuel_set_pressure
-    ramp_up_duration:
+        "%run": config_pressurize_target_pressure_fuel
+    max_lox_nominal_pressure:
       "%int":
-        "%run": config_pressurize_ramp_up_duration
-    max_critical_pressure:
-      "%float":
-        "%run": config_pressurize_max_critical_pressure
-    max_nominal_pressure:
-      "%float":
-        "%run": config_pressurize_max_nominal_pressure
-    min_nominal_pressure:
-      "%float":
-        "%run": config_pressurize_min_nominal_pressure
+        "%run": config_pressurize_max_lox_nominal_pressure
+    min_lox_nominal_pressure:
+      "%int":
+        "%run": config_pressurize_min_lox_nominal_pressure
+    max_fuel_nominal_pressure:
+      "%int":
+        "%run": config_pressurize_rmax_fuel_nominal_pressure
+    min_fuel_nominal_pressure:
+      "%int":
+        "%run": config_pressurize_rmin_fuel_nominal_pressure
   
   # === IGNITION ===
   ignition:

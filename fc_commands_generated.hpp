@@ -590,6 +590,13 @@ enum State {
     State_579,
     State_580,
     State_581,
+    State_582,
+    State_583,
+    State_584,
+    State_585,
+    State_586,
+    State_587,
+    State_588,
 };
 
 struct driver {
@@ -610,13 +617,13 @@ struct driver {
     void (*config_ignition_igniter_duration)(void* ctx, int value);
     void (*config_ignition_prechill_duration)(void* ctx, int value);
     void (*config_ignition_ramp_up)(void* ctx, int value);
-    void (*config_pressurize_fuel_set_pressure)(void* ctx, float value);
     void (*config_pressurize_hold_delay)(void* ctx, int value);
-    void (*config_pressurize_lox_set_pressure)(void* ctx, float value);
-    void (*config_pressurize_max_critical_pressure)(void* ctx, float value);
-    void (*config_pressurize_max_nominal_pressure)(void* ctx, float value);
-    void (*config_pressurize_min_nominal_pressure)(void* ctx, float value);
-    void (*config_pressurize_ramp_up_duration)(void* ctx, int value);
+    void (*config_pressurize_max_lox_nominal_pressure)(void* ctx, int value);
+    void (*config_pressurize_min_lox_nominal_pressure)(void* ctx, int value);
+    void (*config_pressurize_rmax_fuel_nominal_pressure)(void* ctx, int value);
+    void (*config_pressurize_rmin_fuel_nominal_pressure)(void* ctx, int value);
+    void (*config_pressurize_target_pressure_fuel)(void* ctx, float value);
+    void (*config_pressurize_target_pressure_lox)(void* ctx, float value);
     void (*config_print_buffer)(void* ctx);
     void (*config_print_commited)(void* ctx);
     void (*config_print_status)(void* ctx);
