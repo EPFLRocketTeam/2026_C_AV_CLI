@@ -597,6 +597,23 @@ enum State {
     State_586,
     State_587,
     State_588,
+    State_589,
+    State_590,
+    State_591,
+    State_592,
+    State_593,
+    State_594,
+    State_595,
+    State_596,
+    State_597,
+    State_598,
+    State_599,
+    State_600,
+    State_601,
+    State_602,
+    State_603,
+    State_604,
+    State_605,
 };
 
 struct driver {
@@ -607,6 +624,7 @@ struct driver {
     void (*av_recover)(void* ctx);
     void (*ball_fuel)(void* ctx, float value);
     void (*ball_lox)(void* ctx, float value);
+    void (*coldflow_repressurize)(void* ctx);
     void (*config_burn_cutoff_delay)(void* ctx, int value);
     void (*config_burn_impulse)(void* ctx, float value);
     void (*config_burn_max_duration_engine)(void* ctx, int value);
@@ -627,6 +645,7 @@ struct driver {
     void (*config_print_buffer)(void* ctx);
     void (*config_print_commited)(void* ctx);
     void (*config_print_status)(void* ctx);
+    void (*config_set_coldflow_mode)(void* ctx, bool value);
     void (*dpr_broadcast_abort)(void* ctx);
     void (*dpr_eth_abort)(void* ctx);
     void (*dpr_eth_passivate)(void* ctx);

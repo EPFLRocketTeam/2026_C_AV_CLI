@@ -97,6 +97,10 @@ dpr:
     "%void":
       "%run": dpr_broadcast_abort
   
+repressurize:
+  "%void":
+    "%run": coldflow_repressurize
+
 # === LOGGING ===
 logs:
   can:
@@ -186,6 +190,10 @@ config:
         "%int": 
           "%run": config_burn_max_duration_engine
   
+  coldflow:
+    "%bool":
+      "%run": config_set_coldflow_mode
+
   print:
     buffer:
       "%void":
