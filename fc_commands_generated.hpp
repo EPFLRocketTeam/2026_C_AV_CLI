@@ -610,10 +610,6 @@ enum State {
     State_599,
     State_600,
     State_601,
-    State_602,
-    State_603,
-    State_604,
-    State_605,
 };
 
 struct driver {
@@ -624,7 +620,7 @@ struct driver {
     void (*av_recover)(void* ctx);
     void (*ball_fuel)(void* ctx, float value);
     void (*ball_lox)(void* ctx, float value);
-    void (*coldflow_repressurize)(void* ctx);
+    void (*coldflow_rearm)(void* ctx);
     void (*config_burn_cutoff_delay)(void* ctx, int value);
     void (*config_burn_impulse)(void* ctx, float value);
     void (*config_burn_max_duration_engine)(void* ctx, int value);
@@ -667,7 +663,6 @@ struct driver {
     void (*main_lox)(void* ctx, bool value);
     void (*prc_abort)(void* ctx);
     void (*prc_clear_to_ignite)(void* ctx);
-    void (*prc_coldflow)(void* ctx);
     void (*prc_ignite)(void* ctx);
     void (*prc_passivate)(void* ctx);
     void (*prc_reset)(void* ctx);

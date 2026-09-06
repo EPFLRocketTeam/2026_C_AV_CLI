@@ -63,9 +63,6 @@ abort:
 recover:
   "%void":
     "%run": av_recover
-coldflow:
-  "%void":
-    "%run": prc_coldflow
 dpr:
   lox:
     pressurize:
@@ -97,9 +94,10 @@ dpr:
     "%void":
       "%run": dpr_broadcast_abort
   
-repressurize:
-  "%void":
-    "%run": coldflow_repressurize
+coldflow:
+  rearm:
+    "%void":
+      "%run": coldflow_rearm
 
 # === LOGGING ===
 logs:
