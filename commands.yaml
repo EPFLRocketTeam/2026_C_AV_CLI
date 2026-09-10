@@ -141,6 +141,12 @@ config:
     bv_opening_fuel:
       "%float":
         "%run": config_pressurize_bv_opening_fuel
+    stable_opening_lox:
+      "%float":
+        "%run": config_pressurize_stable_opening_lox
+    stable_opening_fuel:
+      "%float":
+        "%run": config_pressurize_stable_opening_fuel
     target_pressure_lox:
       "%float": 
         "%run": config_pressurize_target_pressure_lox

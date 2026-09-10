@@ -630,6 +630,30 @@ enum State {
     State_619,
     State_620,
     State_621,
+    State_622,
+    State_623,
+    State_624,
+    State_625,
+    State_626,
+    State_627,
+    State_628,
+    State_629,
+    State_630,
+    State_631,
+    State_632,
+    State_633,
+    State_634,
+    State_635,
+    State_636,
+    State_637,
+    State_638,
+    State_639,
+    State_640,
+    State_641,
+    State_642,
+    State_643,
+    State_644,
+    State_645,
 };
 
 struct driver {
@@ -658,6 +682,8 @@ struct driver {
     void (*config_pressurize_max_lox_nominal_pressure)(void* ctx, float value);
     void (*config_pressurize_min_fuel_nominal_pressure)(void* ctx, float value);
     void (*config_pressurize_min_lox_nominal_pressure)(void* ctx, float value);
+    void (*config_pressurize_stable_opening_fuel)(void* ctx, float value);
+    void (*config_pressurize_stable_opening_lox)(void* ctx, float value);
     void (*config_pressurize_target_pressure_fuel)(void* ctx, float value);
     void (*config_pressurize_target_pressure_lox)(void* ctx, float value);
     void (*config_print_buffer)(void* ctx);
