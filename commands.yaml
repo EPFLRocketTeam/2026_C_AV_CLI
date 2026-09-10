@@ -147,6 +147,12 @@ config:
     stable_opening_fuel:
       "%float":
         "%run": config_pressurize_stable_opening_fuel
+    preburn_duration_lox:
+      "%float":
+        "%run": config_pressurize_preburn_duration_lox
+    preburn_duration_fuel:
+      "%float":
+        "%run": config_pressurize_preburn_duration_fuel
     target_pressure_lox:
       "%float": 
         "%run": config_pressurize_target_pressure_lox
