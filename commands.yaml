@@ -135,6 +135,12 @@ config:
     hold_delay:
       "%int": 
         "%run": config_pressurize_hold_delay
+    bv_opening_lox:
+      "%float":
+        "%run": config_pressurize_bv_opening_lox
+    bv_opening_fuel:
+      "%float":
+        "%run": config_pressurize_bv_opening_fuel
     target_pressure_lox:
       "%float": 
         "%run": config_pressurize_target_pressure_lox

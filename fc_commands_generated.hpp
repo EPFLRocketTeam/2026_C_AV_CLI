@@ -610,6 +610,26 @@ enum State {
     State_599,
     State_600,
     State_601,
+    State_602,
+    State_603,
+    State_604,
+    State_605,
+    State_606,
+    State_607,
+    State_608,
+    State_609,
+    State_610,
+    State_611,
+    State_612,
+    State_613,
+    State_614,
+    State_615,
+    State_616,
+    State_617,
+    State_618,
+    State_619,
+    State_620,
+    State_621,
 };
 
 struct driver {
@@ -631,6 +651,8 @@ struct driver {
     void (*config_ignition_igniter_duration)(void* ctx, int value);
     void (*config_ignition_prechill_duration)(void* ctx, int value);
     void (*config_ignition_ramp_up)(void* ctx, int value);
+    void (*config_pressurize_bv_opening_fuel)(void* ctx, float value);
+    void (*config_pressurize_bv_opening_lox)(void* ctx, float value);
     void (*config_pressurize_hold_delay)(void* ctx, int value);
     void (*config_pressurize_max_fuel_nominal_pressure)(void* ctx, float value);
     void (*config_pressurize_max_lox_nominal_pressure)(void* ctx, float value);
