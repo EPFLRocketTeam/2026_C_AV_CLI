@@ -98,6 +98,33 @@ coldflow:
   rearm:
     "%void":
       "%run": coldflow_rearm
+cameras:
+  display:
+    aero_bot:
+      "%void":
+        "%run": cameras_display_aero_bot
+    aero_top:
+      "%void":
+        "%run": cameras_display_aero_top
+    aero_sepmech:
+      "%void":
+        "%run": cameras_display_sepmech
+    all:
+      "%void":
+        "%run": cameras_display_all
+  start:
+    "%void":
+      "%run": cameras_start
+  stop:
+    "%void":
+      "%run": cameras_stop
+  abort:
+    "%void":
+      "%run": cameras_abort
+  recover:
+    "%void":
+      "%run": cameras_recover
+
 
 # === LOGGING ===
 logs:

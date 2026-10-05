@@ -680,6 +680,59 @@ enum State {
     State_669,
     State_670,
     State_671,
+    State_672,
+    State_673,
+    State_674,
+    State_675,
+    State_676,
+    State_677,
+    State_678,
+    State_679,
+    State_680,
+    State_681,
+    State_682,
+    State_683,
+    State_684,
+    State_685,
+    State_686,
+    State_687,
+    State_688,
+    State_689,
+    State_690,
+    State_691,
+    State_692,
+    State_693,
+    State_694,
+    State_695,
+    State_696,
+    State_697,
+    State_698,
+    State_699,
+    State_700,
+    State_701,
+    State_702,
+    State_703,
+    State_704,
+    State_705,
+    State_706,
+    State_707,
+    State_708,
+    State_709,
+    State_710,
+    State_711,
+    State_712,
+    State_713,
+    State_714,
+    State_715,
+    State_716,
+    State_717,
+    State_718,
+    State_719,
+    State_720,
+    State_721,
+    State_722,
+    State_723,
+    State_724,
 };
 
 struct driver {
@@ -690,6 +743,14 @@ struct driver {
     void (*av_recover)(void* ctx);
     void (*ball_fuel)(void* ctx, float value);
     void (*ball_lox)(void* ctx, float value);
+    void (*cameras_abort)(void* ctx);
+    void (*cameras_display_aero_bot)(void* ctx);
+    void (*cameras_display_aero_top)(void* ctx);
+    void (*cameras_display_all)(void* ctx);
+    void (*cameras_display_sepmech)(void* ctx);
+    void (*cameras_recover)(void* ctx);
+    void (*cameras_start)(void* ctx);
+    void (*cameras_stop)(void* ctx);
     void (*coldflow_rearm)(void* ctx);
     void (*config_burn_cutoff_delay)(void* ctx, int value);
     void (*config_burn_impulse)(void* ctx, float value);
