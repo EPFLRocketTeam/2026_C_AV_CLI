@@ -211,9 +211,9 @@ def main():
     root, _ = build_trie(leaves)
     states = collect_states(root)
 
-    with open(os.path.join(output_dir, f"{basename}.hpp"), "w") as f:
+    with open(os.path.join(output_dir, f"{basename}.hpp"), "w", newline="\n") as f:
         f.write(generate_header(states, leaves, basename))
-    with open(os.path.join(output_dir, f"{basename}.cpp"), "w") as f:
+    with open(os.path.join(output_dir, f"{basename}.cpp"), "w", newline="\n") as f:
         f.write(generate_source(states, basename))
 
     print(f"Generated {len(states)} states from {len(leaves)} command(s).")

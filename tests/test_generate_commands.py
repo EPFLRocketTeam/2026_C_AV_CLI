@@ -252,3 +252,9 @@ def test_same_function_with_two_types_is_rejected():
     with pytest.raises(SystemExit, match="f1"):
         gc.generate_header([], [("a", "bool", "f1"), ("b", "int", "f1")], "x")
 
+
+def test_emitted_files_use_lf_line_endings(tmp_path):
+    hpp, cpp = emit(SMALL, tmp_path)
+    assert b"\r" not in hpp.read_bytes()
+    assert b"\r" not in cpp.read_bytes()
+
