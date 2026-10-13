@@ -228,3 +228,27 @@ def test_overlong_argument_is_truncated_not_overflowed(tmp_path):
     assert out[0] == [f"f_float {float(kept):g}"]
     # arg_len was reset after the long one, so the next argument is clean
     assert out[1] == ["f_float 7"]
+
+
+# --- defects: each of these failed against the original generator -----------
+
+def test_duplicate_path_is_rejected():
+    with pytest.raises(SystemExit, match="duplicate"):
+        gc.build_trie([("a b", "bool", "f1"), ("a b", "bool", "f2")])
+
+
+def test_void_command_that_prefixes_another_is_rejected():
+    # "abort" fires on newline, so "abort_all" below it would be unreachable
+    with pytest.raises(SystemExit, match="prefix"):
+        gc.build_trie([("abort", "void", "f1"), ("abort_all", "void", "f2")])
+
+
+def test_argument_command_that_prefixes_another_is_rejected():
+    with pytest.raises(SystemExit, match="prefix"):
+        gc.build_trie([("a", "bool", "f1"), ("a b", "bool", "f2")])
+
+
+def test_same_function_with_two_types_is_rejected():
+    with pytest.raises(SystemExit, match="f1"):
+        gc.generate_header([], [("a", "bool", "f1"), ("b", "int", "f1")], "x")
+

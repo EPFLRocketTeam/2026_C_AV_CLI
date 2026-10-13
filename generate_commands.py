@@ -70,9 +70,15 @@ def build_trie(leaves):
         literal = path if is_void else path + " "
         node = root
         for ch in literal:
+            if node.arg_leaf is not None:
+                sys.exit(f"command '{path}' extends another command that ends at a prefix of it")
             if ch not in node.children:
                 node.children[ch] = new_node()
             node = node.children[ch]
+        if node.arg_leaf is not None:
+            sys.exit(f"duplicate command '{path}'")
+        if node.children:
+            sys.exit(f"command '{path}' is a prefix of another command")
         node.arg_leaf = (type_name, function)
 
     return root, next_id[0]
@@ -95,6 +101,10 @@ def collect_states(root):
 
 def generate_header(states, leaves, basename):
     functions = sorted({(f, t) for (_, t, f) in leaves})
+    seen = {}
+    for function, type_name in functions:
+        if seen.setdefault(function, type_name) != type_name:
+            sys.exit(f"function '{function}' is used with two types: {seen[function]} and {type_name}")
 
     lines = []
     lines.append("// GENERATED FILE -- do not edit by hand. Regenerate with generate_commands.py.")
