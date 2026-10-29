@@ -17,7 +17,7 @@ void push_char(context* ctx, const driver* drv, char c) {
     // argument states, State_Sink.
     const int state = ctx->state;
 
-    if (state >= 140 && state != State_Sink) {
+    if (state >= 162 && state != State_Sink) {
         // typed argument state: buffer until the newline, then parse and call
         if (c != '\n') {
             if (ctx->arg_len < 32) ctx->arg_buffer[ctx->arg_len++] = c;
@@ -53,7 +53,7 @@ void push_char(context* ctx, const driver* drv, char c) {
 
     if (c == '\n') {
         ctx->state = State_0;
-        if (state >= 131 && state < 140) {
+        if (state >= 150 && state < 162) {
             // void argument state: the newline right after the path fires it
             void (*fn_void)(void*) = nullptr;
             switch (state) {
@@ -66,6 +66,9 @@ void push_char(context* ctx, const driver* drv, char c) {
             case State_111: fn_void = drv->fsm_reset; break;
             case State_143: fn_void = drv->config_print_status; break;
             case State_149: fn_void = drv->config_commit; break;
+            case State_158: fn_void = drv->system_dfu; break;
+            case State_164: fn_void = drv->system_reboot; break;
+            case State_171: fn_void = drv->system_confirm; break;
             }
             if (fn_void != nullptr) fn_void(ctx->handler_ctx);
             return;
@@ -91,6 +94,7 @@ void push_char(context* ctx, const driver* drv, char c) {
         switch (c) {
         case 'e': ctx->state = State_6; return;
         case 't': ctx->state = State_2; return;
+        case 'y': ctx->state = State_150; return;
         }
         break;
     case State_2:
@@ -748,6 +752,103 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_148:
         switch (c) {
         case 't': ctx->state = State_149; return;
+        }
+        break;
+    case State_150:
+        switch (c) {
+        case 's': ctx->state = State_151; return;
+        }
+        break;
+    case State_151:
+        switch (c) {
+        case 't': ctx->state = State_152; return;
+        }
+        break;
+    case State_152:
+        switch (c) {
+        case 'e': ctx->state = State_153; return;
+        }
+        break;
+    case State_153:
+        switch (c) {
+        case 'm': ctx->state = State_154; return;
+        }
+        break;
+    case State_154:
+        switch (c) {
+        case ' ': ctx->state = State_155; return;
+        }
+        break;
+    case State_155:
+        switch (c) {
+        case 'c': ctx->state = State_165; return;
+        case 'd': ctx->state = State_156; return;
+        case 'r': ctx->state = State_159; return;
+        }
+        break;
+    case State_156:
+        switch (c) {
+        case 'f': ctx->state = State_157; return;
+        }
+        break;
+    case State_157:
+        switch (c) {
+        case 'u': ctx->state = State_158; return;
+        }
+        break;
+    case State_159:
+        switch (c) {
+        case 'e': ctx->state = State_160; return;
+        }
+        break;
+    case State_160:
+        switch (c) {
+        case 'b': ctx->state = State_161; return;
+        }
+        break;
+    case State_161:
+        switch (c) {
+        case 'o': ctx->state = State_162; return;
+        }
+        break;
+    case State_162:
+        switch (c) {
+        case 'o': ctx->state = State_163; return;
+        }
+        break;
+    case State_163:
+        switch (c) {
+        case 't': ctx->state = State_164; return;
+        }
+        break;
+    case State_165:
+        switch (c) {
+        case 'o': ctx->state = State_166; return;
+        }
+        break;
+    case State_166:
+        switch (c) {
+        case 'n': ctx->state = State_167; return;
+        }
+        break;
+    case State_167:
+        switch (c) {
+        case 'f': ctx->state = State_168; return;
+        }
+        break;
+    case State_168:
+        switch (c) {
+        case 'i': ctx->state = State_169; return;
+        }
+        break;
+    case State_169:
+        switch (c) {
+        case 'r': ctx->state = State_170; return;
+        }
+        break;
+    case State_170:
+        switch (c) {
+        case 'm': ctx->state = State_171; return;
         }
         break;
     }

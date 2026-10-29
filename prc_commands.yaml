@@ -70,3 +70,14 @@ config:
   commit:
     "%void":
       "%run": config_commit
+
+system:
+  dfu:
+    "%void":
+      "%run": system_dfu
+  reboot:
+    "%void":
+      "%run": system_reboot
+  confirm:
+    "%void":
+      "%run": system_confirm
