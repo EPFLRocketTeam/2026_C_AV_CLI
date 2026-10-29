@@ -16,7 +16,9 @@ the buffer per the leaf's declared type and calling its driver function.
 A character with no edge sends the parser to State_Sink, which only a
 newline leaves, so "xfsm ignite" runs nothing. A bool argument must be
 open, close, on or off; anything else runs nothing and calls the optional
-driver member on_bad_argument if it is bound.
+driver member on_bad_argument if it is bound. A non-empty line that matches
+no command calls the optional driver member on_unknown_command if it is
+bound.
 """
 
 import argparse
@@ -39,7 +41,9 @@ TYPE_INFO = {
 
 ARG_BUFFER_SIZE = 32  # usable chars; +1 more reserved for the NUL terminator
 
-BAD_ARGUMENT = "on_bad_argument"  # optional driver member, always emitted last
+BAD_ARGUMENT = "on_bad_argument"  # optional driver members, always emitted last
+UNKNOWN_COMMAND = "on_unknown_command"
+RESERVED = (BAD_ARGUMENT, UNKNOWN_COMMAND)
 BOOL_TRUE = ("open", "on")
 BOOL_FALSE = ("close", "off")
 
@@ -129,8 +133,8 @@ def generate_header(states, leaves, basename, namespace=None):
     functions = sorted({(f, t) for (_, t, f) in leaves})
     seen = {}
     for function, type_name in functions:
-        if function == BAD_ARGUMENT:
-            sys.exit(f"function name '{BAD_ARGUMENT}' is reserved for the bad argument callback")
+        if function in RESERVED:
+            sys.exit(f"function name '{function}' is reserved for an optional driver callback")
         if seen.setdefault(function, type_name) != type_name:
             sys.exit(f"function '{function}' is used with two types: {seen[function]} and {type_name}")
 
@@ -162,6 +166,8 @@ def generate_header(states, leaves, basename, namespace=None):
             lines.append(f"    void (*{function})(void* ctx, {cpp_type} value);")
     lines.append("    // Optional: called when a bool argument is not open, close, on or off.")
     lines.append(f"    void (*{BAD_ARGUMENT})(void* ctx) = nullptr;")
+    lines.append("    // Optional: called when a non-empty line matches no command.")
+    lines.append(f"    void (*{UNKNOWN_COMMAND})(void* ctx) = nullptr;")
     lines.append("};")
     lines.append("")
     lines.append("struct context {")
@@ -240,16 +246,26 @@ def generate_source(states, basename, namespace=None):
             for ch, child in sorted(s.children.items()):
                 escaped = "' '" if ch == " " else f"'{ch}'"
                 lines.append(f"        case {escaped}: ctx->state = State_{child.id}; break;")
-            # A newline with no edge ends a mistyped or partial command;
-            # any other unknown character waits in State_Sink for it.
-            lines.append("        case '\\n': ctx->state = State_0; break;")
+            # A newline with no edge ends a mistyped or partial command
+            # (reported, except an empty line at the root); any other
+            # unknown character waits in State_Sink for it.
+            if s.id == 0:
+                lines.append("        case '\\n': ctx->state = State_0; break;")
+            else:
+                lines.append("        case '\\n':")
+                lines.append("            ctx->state = State_0;")
+                lines.append(f"            if (drv->{UNKNOWN_COMMAND} != nullptr) drv->{UNKNOWN_COMMAND}(ctx->handler_ctx);")
+                lines.append("            break;")
             lines.append("        default: ctx->state = State_Sink; break;")
             lines.append("        }")
         lines.append("        break;")
         lines.append("    }")
 
     lines.append("    case State_Sink: {")
-    lines.append("        if (c == '\\n') ctx->state = State_0;")
+    lines.append("        if (c == '\\n') {")
+    lines.append("            ctx->state = State_0;")
+    lines.append(f"            if (drv->{UNKNOWN_COMMAND} != nullptr) drv->{UNKNOWN_COMMAND}(ctx->handler_ctx);")
+    lines.append("        }")
     lines.append("        break;")
     lines.append("    }")
     lines.append("    }")

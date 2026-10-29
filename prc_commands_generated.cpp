@@ -24,7 +24,10 @@ void push_char(context* ctx, const driver* drv, char c) {
         switch (c) {
         case 'e': ctx->state = State_6; break;
         case 't': ctx->state = State_2; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -32,7 +35,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_2: {
         switch (c) {
         case 'a': ctx->state = State_3; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -40,7 +46,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_3: {
         switch (c) {
         case 't': ctx->state = State_4; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -48,7 +57,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_4: {
         switch (c) {
         case 'e': ctx->state = State_5; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -65,7 +77,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_6: {
         switch (c) {
         case 'n': ctx->state = State_7; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -73,7 +88,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_7: {
         switch (c) {
         case 's': ctx->state = State_8; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -81,7 +99,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_8: {
         switch (c) {
         case 'o': ctx->state = State_9; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -89,7 +110,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_9: {
         switch (c) {
         case 'r': ctx->state = State_10; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -97,7 +121,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_10: {
         switch (c) {
         case 's': ctx->state = State_11; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -114,7 +141,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_12: {
         switch (c) {
         case 'a': ctx->state = State_13; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -122,7 +152,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_13: {
         switch (c) {
         case 'l': ctx->state = State_14; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -130,7 +163,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_14: {
         switch (c) {
         case 'v': ctx->state = State_15; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -138,7 +174,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_15: {
         switch (c) {
         case 'e': ctx->state = State_16; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -146,7 +185,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_16: {
         switch (c) {
         case ' ': ctx->state = State_17; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -158,7 +200,10 @@ void push_char(context* ctx, const driver* drv, char c) {
         case 'm': ctx->state = State_45; break;
         case 's': ctx->state = State_23; break;
         case 'v': ctx->state = State_18; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -166,7 +211,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_18: {
         switch (c) {
         case 'e': ctx->state = State_19; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -174,7 +222,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_19: {
         switch (c) {
         case 'n': ctx->state = State_20; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -182,7 +233,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_20: {
         switch (c) {
         case 't': ctx->state = State_21; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -190,7 +244,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_21: {
         switch (c) {
         case ' ': ctx->state = State_22; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -215,7 +272,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_23: {
         switch (c) {
         case 'a': ctx->state = State_24; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -223,7 +283,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_24: {
         switch (c) {
         case 'f': ctx->state = State_25; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -231,7 +294,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_25: {
         switch (c) {
         case 'e': ctx->state = State_26; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -239,7 +305,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_26: {
         switch (c) {
         case 't': ctx->state = State_27; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -247,7 +316,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_27: {
         switch (c) {
         case 'y': ctx->state = State_28; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -255,7 +327,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_28: {
         switch (c) {
         case ' ': ctx->state = State_29; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -280,7 +355,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_30: {
         switch (c) {
         case 'o': ctx->state = State_31; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -288,7 +366,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_31: {
         switch (c) {
         case 'p': ctx->state = State_32; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -296,7 +377,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_32: {
         switch (c) {
         case 'v': ctx->state = State_33; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -304,7 +388,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_33: {
         switch (c) {
         case '_': ctx->state = State_34; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -312,7 +399,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_34: {
         switch (c) {
         case 'v': ctx->state = State_35; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -320,7 +410,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_35: {
         switch (c) {
         case 'e': ctx->state = State_36; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -328,7 +421,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_36: {
         switch (c) {
         case 'n': ctx->state = State_37; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -336,7 +432,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_37: {
         switch (c) {
         case 't': ctx->state = State_38; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -344,7 +443,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_38: {
         switch (c) {
         case ' ': ctx->state = State_39; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -369,7 +471,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_40: {
         switch (c) {
         case 'a': ctx->state = State_41; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -377,7 +482,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_41: {
         switch (c) {
         case 'l': ctx->state = State_42; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -385,7 +493,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_42: {
         switch (c) {
         case 'l': ctx->state = State_43; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -393,7 +504,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_43: {
         switch (c) {
         case ' ': ctx->state = State_44; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -413,7 +527,10 @@ void push_char(context* ctx, const driver* drv, char c) {
         switch (c) {
         case 'e': ctx->state = State_48; break;
         case 'o': ctx->state = State_46; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -421,7 +538,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_46: {
         switch (c) {
         case ' ': ctx->state = State_47; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -446,7 +566,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_48: {
         switch (c) {
         case ' ': ctx->state = State_49; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -471,7 +594,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_50: {
         switch (c) {
         case 'g': ctx->state = State_51; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -479,7 +605,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_51: {
         switch (c) {
         case 'n': ctx->state = State_52; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -487,7 +616,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_52: {
         switch (c) {
         case 'i': ctx->state = State_53; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -495,7 +627,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_53: {
         switch (c) {
         case 't': ctx->state = State_54; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -503,7 +638,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_54: {
         switch (c) {
         case 'e': ctx->state = State_55; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -511,7 +649,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_55: {
         switch (c) {
         case 'r': ctx->state = State_56; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -519,7 +660,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_56: {
         switch (c) {
         case ' ': ctx->state = State_57; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -544,7 +688,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_58: {
         switch (c) {
         case 's': ctx->state = State_59; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -552,7 +699,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_59: {
         switch (c) {
         case 'm': ctx->state = State_60; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -560,7 +710,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_60: {
         switch (c) {
         case ' ': ctx->state = State_61; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -572,7 +725,10 @@ void push_char(context* ctx, const driver* drv, char c) {
         case 'i': ctx->state = State_88; break;
         case 'p': ctx->state = State_62; break;
         case 'r': ctx->state = State_107; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -581,7 +737,10 @@ void push_char(context* ctx, const driver* drv, char c) {
         switch (c) {
         case 'a': ctx->state = State_99; break;
         case 'r': ctx->state = State_63; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -589,7 +748,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_63: {
         switch (c) {
         case 'e': ctx->state = State_64; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -597,7 +759,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_64: {
         switch (c) {
         case 's': ctx->state = State_65; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -605,7 +770,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_65: {
         switch (c) {
         case 's': ctx->state = State_66; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -613,7 +781,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_66: {
         switch (c) {
         case 'u': ctx->state = State_67; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -621,7 +792,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_67: {
         switch (c) {
         case 'r': ctx->state = State_68; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -629,7 +803,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_68: {
         switch (c) {
         case 'i': ctx->state = State_69; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -637,7 +814,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_69: {
         switch (c) {
         case 'z': ctx->state = State_70; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -645,7 +825,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_70: {
         switch (c) {
         case 'e': ctx->state = State_71; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -653,7 +836,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_71: {
         switch (c) {
         case ' ': ctx->state = State_72; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -678,7 +864,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_73: {
         switch (c) {
         case 'l': ctx->state = State_74; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -686,7 +875,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_74: {
         switch (c) {
         case 'e': ctx->state = State_75; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -694,7 +886,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_75: {
         switch (c) {
         case 'a': ctx->state = State_76; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -702,7 +897,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_76: {
         switch (c) {
         case 'r': ctx->state = State_77; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -710,7 +908,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_77: {
         switch (c) {
         case '_': ctx->state = State_78; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -718,7 +919,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_78: {
         switch (c) {
         case 't': ctx->state = State_79; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -726,7 +930,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_79: {
         switch (c) {
         case 'o': ctx->state = State_80; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -734,7 +941,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_80: {
         switch (c) {
         case '_': ctx->state = State_81; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -742,7 +952,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_81: {
         switch (c) {
         case 'i': ctx->state = State_82; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -750,7 +963,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_82: {
         switch (c) {
         case 'g': ctx->state = State_83; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -758,7 +974,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_83: {
         switch (c) {
         case 'n': ctx->state = State_84; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -766,7 +985,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_84: {
         switch (c) {
         case 'i': ctx->state = State_85; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -774,7 +996,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_85: {
         switch (c) {
         case 't': ctx->state = State_86; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -782,7 +1007,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_86: {
         switch (c) {
         case 'e': ctx->state = State_87; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -799,7 +1027,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_88: {
         switch (c) {
         case 'g': ctx->state = State_89; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -807,7 +1038,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_89: {
         switch (c) {
         case 'n': ctx->state = State_90; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -815,7 +1049,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_90: {
         switch (c) {
         case 'i': ctx->state = State_91; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -823,7 +1060,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_91: {
         switch (c) {
         case 't': ctx->state = State_92; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -831,7 +1071,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_92: {
         switch (c) {
         case 'e': ctx->state = State_93; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -848,7 +1091,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_94: {
         switch (c) {
         case 'b': ctx->state = State_95; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -856,7 +1102,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_95: {
         switch (c) {
         case 'o': ctx->state = State_96; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -864,7 +1113,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_96: {
         switch (c) {
         case 'r': ctx->state = State_97; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -872,7 +1124,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_97: {
         switch (c) {
         case 't': ctx->state = State_98; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -889,7 +1144,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_99: {
         switch (c) {
         case 's': ctx->state = State_100; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -897,7 +1155,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_100: {
         switch (c) {
         case 's': ctx->state = State_101; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -905,7 +1166,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_101: {
         switch (c) {
         case 'i': ctx->state = State_102; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -913,7 +1177,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_102: {
         switch (c) {
         case 'v': ctx->state = State_103; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -921,7 +1188,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_103: {
         switch (c) {
         case 'a': ctx->state = State_104; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -929,7 +1199,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_104: {
         switch (c) {
         case 't': ctx->state = State_105; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -937,7 +1210,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_105: {
         switch (c) {
         case 'e': ctx->state = State_106; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -954,7 +1230,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_107: {
         switch (c) {
         case 'e': ctx->state = State_108; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -962,7 +1241,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_108: {
         switch (c) {
         case 's': ctx->state = State_109; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -970,7 +1252,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_109: {
         switch (c) {
         case 'e': ctx->state = State_110; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -978,7 +1263,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_110: {
         switch (c) {
         case 't': ctx->state = State_111; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -995,7 +1283,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_112: {
         switch (c) {
         case 'o': ctx->state = State_113; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -1003,7 +1294,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_113: {
         switch (c) {
         case 'g': ctx->state = State_114; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -1011,7 +1305,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_114: {
         switch (c) {
         case 's': ctx->state = State_115; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -1019,7 +1316,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_115: {
         switch (c) {
         case ' ': ctx->state = State_116; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -1028,7 +1328,10 @@ void push_char(context* ctx, const driver* drv, char c) {
         switch (c) {
         case 'c': ctx->state = State_121; break;
         case 'u': ctx->state = State_117; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -1036,7 +1339,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_117: {
         switch (c) {
         case 's': ctx->state = State_118; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -1044,7 +1350,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_118: {
         switch (c) {
         case 'b': ctx->state = State_119; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -1052,7 +1361,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_119: {
         switch (c) {
         case ' ': ctx->state = State_120; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -1077,7 +1389,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_121: {
         switch (c) {
         case 'a': ctx->state = State_122; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -1085,7 +1400,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_122: {
         switch (c) {
         case 'n': ctx->state = State_123; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -1093,7 +1411,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_123: {
         switch (c) {
         case ' ': ctx->state = State_124; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -1118,7 +1439,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_125: {
         switch (c) {
         case 'o': ctx->state = State_126; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -1126,7 +1450,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_126: {
         switch (c) {
         case 'n': ctx->state = State_127; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -1134,7 +1461,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_127: {
         switch (c) {
         case 'f': ctx->state = State_128; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -1142,7 +1472,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_128: {
         switch (c) {
         case 'i': ctx->state = State_129; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -1150,7 +1483,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_129: {
         switch (c) {
         case 'g': ctx->state = State_130; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -1158,7 +1494,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_130: {
         switch (c) {
         case ' ': ctx->state = State_131; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -1167,7 +1506,10 @@ void push_char(context* ctx, const driver* drv, char c) {
         switch (c) {
         case 'c': ctx->state = State_144; break;
         case 'p': ctx->state = State_132; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -1175,7 +1517,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_132: {
         switch (c) {
         case 'r': ctx->state = State_133; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -1183,7 +1528,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_133: {
         switch (c) {
         case 'i': ctx->state = State_134; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -1191,7 +1539,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_134: {
         switch (c) {
         case 'n': ctx->state = State_135; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -1199,7 +1550,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_135: {
         switch (c) {
         case 't': ctx->state = State_136; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -1207,7 +1561,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_136: {
         switch (c) {
         case ' ': ctx->state = State_137; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -1215,7 +1572,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_137: {
         switch (c) {
         case 's': ctx->state = State_138; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -1223,7 +1583,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_138: {
         switch (c) {
         case 't': ctx->state = State_139; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -1231,7 +1594,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_139: {
         switch (c) {
         case 'a': ctx->state = State_140; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -1239,7 +1605,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_140: {
         switch (c) {
         case 't': ctx->state = State_141; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -1247,7 +1616,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_141: {
         switch (c) {
         case 'u': ctx->state = State_142; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -1255,7 +1627,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_142: {
         switch (c) {
         case 's': ctx->state = State_143; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -1272,7 +1647,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_144: {
         switch (c) {
         case 'o': ctx->state = State_145; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -1280,7 +1658,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_145: {
         switch (c) {
         case 'm': ctx->state = State_146; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -1288,7 +1669,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_146: {
         switch (c) {
         case 'm': ctx->state = State_147; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -1296,7 +1680,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_147: {
         switch (c) {
         case 'i': ctx->state = State_148; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -1304,7 +1691,10 @@ void push_char(context* ctx, const driver* drv, char c) {
     case State_148: {
         switch (c) {
         case 't': ctx->state = State_149; break;
-        case '\n': ctx->state = State_0; break;
+        case '\n':
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+            break;
         default: ctx->state = State_Sink; break;
         }
         break;
@@ -1319,7 +1709,10 @@ void push_char(context* ctx, const driver* drv, char c) {
         break;
     }
     case State_Sink: {
-        if (c == '\n') ctx->state = State_0;
+        if (c == '\n') {
+            ctx->state = State_0;
+            if (drv->on_unknown_command != nullptr) drv->on_unknown_command(ctx->handler_ctx);
+        }
         break;
     }
     }

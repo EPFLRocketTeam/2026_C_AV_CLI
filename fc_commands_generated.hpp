@@ -812,6 +812,8 @@ struct driver {
     void (*vent_lox)(void* ctx, bool value);
     // Optional: called when a bool argument is not open, close, on or off.
     void (*on_bad_argument)(void* ctx) = nullptr;
+    // Optional: called when a non-empty line matches no command.
+    void (*on_unknown_command)(void* ctx) = nullptr;
 };
 
 struct context {

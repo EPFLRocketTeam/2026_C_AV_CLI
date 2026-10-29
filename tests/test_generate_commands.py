@@ -144,11 +144,14 @@ def test_real_yaml_counts_match_committed_output(yaml_name, basename, namespace)
     assert len(re.findall(r"^    State_\d+,$", hpp, re.M)) == len(states)
     assert len(re.findall(r"^    case State_\d+: \{$", cpp, re.M)) == len(states)
     callbacks = {f for _, _, f in leaves}
-    # every yaml callback plus the optional on_bad_argument member
-    assert len(re.findall(r"^    void \(\*\w+\)\(void\* ctx", hpp, re.M)) == len(callbacks) + 1
+    # every yaml callback plus the optional on_bad_argument and on_unknown_command members
+    assert len(re.findall(r"^    void \(\*\w+\)\(void\* ctx", hpp, re.M)) == len(callbacks) + 2
     # a bool leaf calls its function twice (true, false) and on_bad_argument once
     bools = sum(1 for _, t, _ in leaves if t == "bool")
-    assert len(re.findall(r"drv->\w+\(ctx->handler_ctx", cpp)) == len(leaves) + 2 * bools
+    assert len(re.findall(r"drv->(?!on_unknown_command)\w+\(ctx->handler_ctx", cpp)) == len(leaves) + 2 * bools
+    # on_unknown_command: every literal state but the root, plus State_Sink
+    literal = sum(1 for s in states if s.arg_leaf is None)
+    assert len(re.findall(r"drv->on_unknown_command\(ctx->handler_ctx", cpp)) == literal - 1 + 1
 
 
 @pairs
@@ -236,9 +239,10 @@ def test_namespace_only_adds_the_wrapper(tmp_path, yaml_name):
         assert strip_namespace(b, "ns") == a.rstrip("\n")
 
 
-def test_reserved_bad_argument_name_is_rejected():
+@pytest.mark.parametrize("name", ["on_bad_argument", "on_unknown_command"])
+def test_reserved_callback_names_are_rejected(name):
     with pytest.raises(SystemExit, match="reserved"):
-        gc.generate_header([], [("a", "void", "on_bad_argument")], "x")
+        gc.generate_header([], [("a", "void", name)], "x")
 
 
 @needs_cxx
@@ -261,7 +265,7 @@ def test_both_committed_pairs_link_into_one_binary(tmp_path, std):
     assert res.returncode == 0, res.stderr + res.stdout
 
 
-def harness(leaves, namespace=None, bind_bad=True):
+def harness(leaves, namespace=None, bind_bad=True, bind_unknown=False):
     funcs = sorted({(f, t) for _, t, f in leaves})
     out = ['#include "gen.hpp"', "#include <cstdio>", "#include <string>"]
     if namespace:
@@ -278,6 +282,8 @@ def harness(leaves, namespace=None, bind_bad=True):
     out.append("  driver d = {" + ", ".join(f for f, _ in funcs) + "};")
     if bind_bad:
         out.append("  d.on_bad_argument = on_bad;")
+    if bind_unknown:
+        out.append('  d.on_unknown_command = [](void*) { std::printf("unknown\\n"); };')
     out.append("  context c; std::string all; int ch;")
     out.append("  while ((ch = std::getchar()) != EOF) all.push_back((char)ch);")
     # A NUL byte separates cases: reset the context and print a marker line.
@@ -288,10 +294,10 @@ def harness(leaves, namespace=None, bind_bad=True):
     return "\n".join(out)
 
 
-def run_cases(tmp_path, text, cases, namespace=None, bind_bad=True):
+def run_cases(tmp_path, text, cases, namespace=None, bind_bad=True, bind_unknown=False):
     """Compile the generated parser for yaml text and feed it each case; return output lines per case."""
     emit(text, tmp_path, namespace=namespace)
-    (tmp_path / "main.cpp").write_text(harness(leaves_of(text), namespace, bind_bad), newline="\n")
+    (tmp_path / "main.cpp").write_text(harness(leaves_of(text), namespace, bind_bad, bind_unknown), newline="\n")
     (tmp_path / "cases.bin").write_bytes(b"\0".join(c.encode() for c in cases))
     res = run_cxx(
         tmp_path,
@@ -335,6 +341,21 @@ def test_unknown_character_sinks_until_newline(tmp_path):
     # Before, State_0 looped on the unknown character and "xv" ran v.
     out = run_cases(tmp_path, SMALL, ["xv\n", "xb on\n", "vx\nv\n", "g x h on\n", "b on\n", "\n\nv\n"])
     assert out == [[], [], ["f_void"], [], ["f_bool 1"], ["f_void"]]
+
+
+@needs_cxx
+def test_unknown_line_calls_on_unknown_command_once(tmp_path):
+    out = run_cases(tmp_path, SMALL, [
+        "zzz\n",      # garbage: through State_Sink
+        " v\n",       # leading space: through State_Sink
+        "g\n",        # partial command: newline in a literal state
+        "g h\n",      # bool command without its argument
+        "vx\n",       # stray character after a void command
+        "\n",         # empty line: nothing
+        "v\n",        # a real command: no unknown
+        "b maybe\n",  # bad argument is not an unknown command
+    ], bind_unknown=True)
+    assert out == [["unknown"], ["unknown"], ["unknown"], ["unknown"], ["unknown"], [], ["f_void"], ["bad"]]
 
 
 @needs_cxx
