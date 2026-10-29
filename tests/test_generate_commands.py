@@ -20,6 +20,14 @@ ROOT = Path(__file__).resolve().parent.parent
 YAML_PATH = ROOT / "commands.yaml"
 BASENAME = "fc_commands_generated"
 
+# Every committed generated pair: (yaml, basename, namespace). The FC pair is
+# emitted without a namespace, the PRC pair inside prc_cli.
+PAIRS = [
+    ("commands.yaml", BASENAME, None),
+    ("prc_commands.yaml", "prc_commands_generated", "prc_cli"),
+]
+pairs = pytest.mark.parametrize("yaml_name,basename,namespace", PAIRS, ids=[b for _, b, _ in PAIRS])
+
 
 def leaves_of(text):
     leaves = []
@@ -27,14 +35,14 @@ def leaves_of(text):
     return leaves
 
 
-def emit(text, out_dir, basename="gen"):
+def emit(text, out_dir, basename="gen", namespace=None):
     """Run the real CLI on yaml text, like CI does."""
     src = out_dir / "in.yaml"
     src.write_text(text, newline="\n")
-    subprocess.run(
-        [sys.executable, str(ROOT / "generate_commands.py"), str(src), str(out_dir), basename],
-        check=True, capture_output=True, text=True,
-    )
+    cmd = [sys.executable, str(ROOT / "generate_commands.py"), str(src), str(out_dir), basename]
+    if namespace:
+        cmd += ["--namespace", namespace]
+    subprocess.run(cmd, check=True, capture_output=True, text=True)
     return out_dir / f"{basename}.hpp", out_dir / f"{basename}.cpp"
 
 
@@ -93,13 +101,19 @@ def test_type_signatures_in_header(tmp_path):
 def test_type_parse_expressions_in_source(tmp_path):
     _, cpp = emit(SMALL, tmp_path)
     text = cpp.read_text()
-    assert "drv->f_int(ctx->handler_ctx, strtol(ctx->arg_buffer, nullptr, 10));" in text
-    assert "drv->f_float(ctx->handler_ctx, strtof(ctx->arg_buffer, nullptr));" in text
-    assert (
-        'drv->f_bool(ctx->handler_ctx, (strcmp(ctx->arg_buffer, "open") == 0 '
-        '|| strcmp(ctx->arg_buffer, "on") == 0));'
-    ) in text
-    assert "drv->f_void(ctx->handler_ctx);" in text
+    assert "fn_int(ctx->handler_ctx, strtol(ctx->arg_buffer, nullptr, 10));" in text
+    assert "fn_float(ctx->handler_ctx, strtof(ctx->arg_buffer, nullptr));" in text
+    assert 'if (strcmp(arg, "open") == 0 || strcmp(arg, "on") == 0) return 1;' in text
+    assert 'if (strcmp(arg, "close") == 0 || strcmp(arg, "off") == 0) return 0;' in text
+    assert "fn_bool(ctx->handler_ctx, value == 1);" in text
+    assert "drv->on_bad_argument(ctx->handler_ctx);" in text
+    assert re.search(r"case State_\d+: fn_int = drv->f_int; break;", text)
+    assert re.search(r"case State_\d+: fn_bool = drv->f_bool; is_bool = true; break;", text)
+    assert re.search(r"case State_\d+: fn_void = drv->f_void; break;", text)
+    # every call through the driver is guarded
+    assert "if (fn_void != nullptr) fn_void(ctx->handler_ctx);" in text
+    assert "else if (fn_bool != nullptr) fn_bool(" in text
+    assert "} else if (fn_int != nullptr) {" in text
 
 
 def test_leaf_paths_join_ancestors():
@@ -121,51 +135,146 @@ def test_void_literal_has_no_trailing_space_and_arg_types_do():
 def test_arg_buffer_is_bounded_in_emitted_code(tmp_path):
     hpp, cpp = emit(SMALL, tmp_path)
     assert f"char arg_buffer[{gc.ARG_BUFFER_SIZE + 1}];" in hpp.read_text()
-    # every argument state (bool, int, float, g h) carries the guard
-    assert cpp.read_text().count(f"ctx->arg_len < {gc.ARG_BUFFER_SIZE}") == 4
+    # one shared append path guards every argument state (bool, int, float, g h)
+    assert cpp.read_text().count(f"ctx->arg_len < {gc.ARG_BUFFER_SIZE}") == 1
 
 
-def test_real_yaml_counts_match_committed_output():
-    leaves = leaves_of(YAML_PATH.read_text())
+@pairs
+def test_real_yaml_counts_match_committed_output(yaml_name, basename, namespace):
+    leaves = leaves_of((ROOT / yaml_name).read_text())
     root, _ = gc.build_trie(leaves)
     states = gc.collect_states(root)
-    hpp = (ROOT / f"{BASENAME}.hpp").read_text()
-    cpp = (ROOT / f"{BASENAME}.cpp").read_text()
+    hpp = (ROOT / f"{basename}.hpp").read_text()
+    cpp = (ROOT / f"{basename}.cpp").read_text()
     assert len(re.findall(r"^    State_\d+,$", hpp, re.M)) == len(states)
-    assert len(re.findall(r"^    case State_\d+: \{$", cpp, re.M)) == len(states)
+    # every state but State_Sink has exactly one case, in one of three switches
+    assert len(re.findall(r"^ +case State_\d+:", cpp, re.M)) == len(states)
     callbacks = {f for _, _, f in leaves}
-    assert len(re.findall(r"^    void \(\*\w+\)\(void\* ctx", hpp, re.M)) == len(callbacks)
-    assert len(re.findall(r"drv->\w+\(ctx->handler_ctx", cpp)) == len(leaves)
+    # every yaml callback plus the optional on_bad_argument and on_unknown_command members
+    assert len(re.findall(r"^    void \(\*\w+\)\(void\* ctx", hpp, re.M)) == len(callbacks) + 2
+    # every leaf picks its driver member once; the two optional callbacks are called once each
+    assert len(re.findall(r"= drv->\w+;", cpp)) == len(leaves)
+    assert len(re.findall(r"drv->on_bad_argument\(ctx->handler_ctx", cpp)) == (1 if any(t == "bool" for _, t, _ in leaves) else 0)
+    assert len(re.findall(r"drv->on_unknown_command\(ctx->handler_ctx", cpp)) == 1
 
 
-def test_committed_output_is_in_sync(tmp_path):
-    emit(YAML_PATH.read_text(), tmp_path, BASENAME)
+@pairs
+def test_committed_output_is_in_sync(tmp_path, yaml_name, basename, namespace):
+    emit((ROOT / yaml_name).read_text(), tmp_path, basename, namespace)
     for ext in ("hpp", "cpp"):
-        fresh = (tmp_path / f"{BASENAME}.{ext}").read_bytes()
-        committed = (ROOT / f"{BASENAME}.{ext}").read_bytes()
-        assert fresh == committed, f"{BASENAME}.{ext} is stale, rerun generate_commands.py"
+        fresh = (tmp_path / f"{basename}.{ext}").read_bytes()
+        committed = (ROOT / f"{basename}.{ext}").read_bytes()
+        assert fresh == committed, f"{basename}.{ext} is stale, rerun generate_commands.py"
 
 
-def test_generation_is_deterministic(tmp_path):
+@pairs
+def test_generation_is_deterministic(tmp_path, yaml_name, basename, namespace):
     a, b = tmp_path / "a", tmp_path / "b"
     a.mkdir()
     b.mkdir()
-    emit(YAML_PATH.read_text(), a, BASENAME)
-    emit(YAML_PATH.read_text(), b, BASENAME)
+    emit((ROOT / yaml_name).read_text(), a, basename, namespace)
+    emit((ROOT / yaml_name).read_text(), b, basename, namespace)
     for ext in ("hpp", "cpp"):
-        assert (a / f"{BASENAME}.{ext}").read_bytes() == (b / f"{BASENAME}.{ext}").read_bytes()
+        assert (a / f"{basename}.{ext}").read_bytes() == (b / f"{basename}.{ext}").read_bytes()
+
+
+# The FC and PRC firmware build with gnu++17 in CubeIDE, the host tests with c++20.
+STDS = pytest.mark.parametrize("std", ["c++20", "gnu++17"])
 
 
 @needs_cxx
-def test_real_generated_cpp_compiles(tmp_path):
-    emit(YAML_PATH.read_text(), tmp_path, BASENAME)
-    res = run_cxx(tmp_path, f"g++ -std=c++20 -Wall -Werror -fsyntax-only -I. {BASENAME}.cpp")
+@pairs
+@STDS
+def test_real_generated_cpp_compiles(tmp_path, yaml_name, basename, namespace, std):
+    emit((ROOT / yaml_name).read_text(), tmp_path, basename, namespace)
+    res = run_cxx(tmp_path, f"g++ -std={std} -Wall -Werror -fsyntax-only -I. {basename}.cpp")
     assert res.returncode == 0, res.stderr
 
 
-def harness(leaves):
+# --- --namespace ---------------------------------------------------------------
+
+def test_namespace_wraps_every_emitted_symbol(tmp_path):
+    hpp, cpp = emit(SMALL, tmp_path, namespace="ns")
+    h, c = hpp.read_text(), cpp.read_text()
+    # opened after the includes, before the first symbol, closed at the very end
+    assert h.index("#include <cstring>") < h.index("namespace ns {") < h.index("enum State {")
+    assert h.rstrip().endswith("}  // namespace ns")
+    assert c.index('#include "gen.hpp"') < c.index("namespace ns {") < c.index("void push_char(")
+    assert c.rstrip().endswith("}  // namespace ns")
+
+
+def test_no_namespace_emits_none(tmp_path):
+    hpp, cpp = emit(SMALL, tmp_path)
+    assert "namespace" not in hpp.read_text()
+    assert "namespace" not in cpp.read_text()
+
+
+@pytest.mark.parametrize("name", ["not a name", "int", "namespace", "and"])
+def test_namespace_must_be_an_identifier(tmp_path, name):
+    src = tmp_path / "in.yaml"
+    src.write_text(SMALL, newline="\n")
+    res = subprocess.run(
+        [sys.executable, str(ROOT / "generate_commands.py"), str(src), str(tmp_path), "gen",
+         "--namespace", name],
+        capture_output=True, text=True,
+    )
+    assert res.returncode != 0
+    assert "not a C++ identifier" in res.stderr
+
+
+def strip_namespace(text, name):
+    return text.replace(f"namespace {name} {{\n\n", "").replace(f"\n}}  // namespace {name}\n", "").rstrip("\n")
+
+
+@pytest.mark.parametrize("yaml_name", ["commands.yaml", "prc_commands.yaml"])
+def test_namespace_only_adds_the_wrapper(tmp_path, yaml_name):
+    # Byte identity of the un-namespaced output, against fresh output rather
+    # than committed files: with the wrapper lines removed, the two match.
+    plain, wrapped = tmp_path / "plain", tmp_path / "wrapped"
+    plain.mkdir()
+    wrapped.mkdir()
+    text = (ROOT / yaml_name).read_text()
+    emit(text, plain, "gen")
+    emit(text, wrapped, "gen", "ns")
+    for ext in ("hpp", "cpp"):
+        a = (plain / f"gen.{ext}").read_text()
+        b = (wrapped / f"gen.{ext}").read_text()
+        assert "namespace" not in a
+        assert strip_namespace(b, "ns") == a.rstrip("\n")
+
+
+@pytest.mark.parametrize("name", ["on_bad_argument", "on_unknown_command"])
+def test_reserved_callback_names_are_rejected(name):
+    with pytest.raises(SystemExit, match="reserved"):
+        gc.generate_header([], [("a", "void", name)], "x")
+
+
+@needs_cxx
+@STDS
+def test_both_committed_pairs_link_into_one_binary(tmp_path, std):
+    # The PRC pair lives in prc_cli, so it does not collide with the FC pair's
+    # global State, driver, context and push_char.
+    for yaml_name, basename, namespace in PAIRS:
+        emit((ROOT / yaml_name).read_text(), tmp_path, basename, namespace)
+    (tmp_path / "both.cpp").write_text(
+        '#include "fc_commands_generated.hpp"\n'
+        '#include "prc_commands_generated.hpp"\n'
+        "int main() { context a; prc_cli::context b; return a.arg_len + b.arg_len; }\n",
+        newline="\n",
+    )
+    res = run_cxx(
+        tmp_path,
+        f"g++ -std={std} -Wall -Werror -I. both.cpp fc_commands_generated.cpp prc_commands_generated.cpp -o both && ./both",
+    )
+    assert res.returncode == 0, res.stderr + res.stdout
+
+
+def harness(leaves, namespace=None, bind_bad=True, bind_unknown=False, unbound=()):
     funcs = sorted({(f, t) for _, t, f in leaves})
     out = ['#include "gen.hpp"', "#include <cstdio>", "#include <string>"]
+    if namespace:
+        out.append(f"using namespace {namespace};")
+    out.append('[[maybe_unused]] static void on_bad(void*) { std::printf("bad\\n"); }')
     for f, t in funcs:
         if t == "void":
             out.append(f'static void {f}(void*) {{ std::printf("{f}\\n"); }}')
@@ -175,6 +284,12 @@ def harness(leaves):
             out.append(f'static void {f}(void*, {t} v) {{ std::printf("{f} %d\\n", v); }}')
     out.append("int main() {")
     out.append("  driver d = {" + ", ".join(f for f, _ in funcs) + "};")
+    if bind_bad:
+        out.append("  d.on_bad_argument = on_bad;")
+    if bind_unknown:
+        out.append('  d.on_unknown_command = [](void*) { std::printf("unknown\\n"); };')
+    for f in unbound:
+        out.append(f"  d.{f} = nullptr;")
     out.append("  context c; std::string all; int ch;")
     out.append("  while ((ch = std::getchar()) != EOF) all.push_back((char)ch);")
     # A NUL byte separates cases: reset the context and print a marker line.
@@ -185,10 +300,11 @@ def harness(leaves):
     return "\n".join(out)
 
 
-def run_cases(tmp_path, text, cases):
+def run_cases(tmp_path, text, cases, namespace=None, bind_bad=True, bind_unknown=False, unbound=()):
     """Compile the generated parser for yaml text and feed it each case; return output lines per case."""
-    emit(text, tmp_path)
-    (tmp_path / "main.cpp").write_text(harness(leaves_of(text)), newline="\n")
+    emit(text, tmp_path, namespace=namespace)
+    (tmp_path / "main.cpp").write_text(
+        harness(leaves_of(text), namespace, bind_bad, bind_unknown, unbound), newline="\n")
     (tmp_path / "cases.bin").write_bytes(b"\0".join(c.encode() for c in cases))
     res = run_cxx(
         tmp_path,
@@ -211,6 +327,63 @@ def test_parser_runtime_behaviour(tmp_path):
         ["f_bool 1"], ["f_bool 1"], ["f_bool 0"], ["f_int 42"], ["f_float 1.5"],
         ["g_h 1"], ["f_void"], [], [], [], ["f_void", "f_bool 1"],
     ]
+
+
+@needs_cxx
+def test_bool_takes_only_open_close_on_off(tmp_path):
+    out = run_cases(tmp_path, SMALL, ["b open\n", "b on\n", "b close\n", "b off\n", "b maybe\n", "b opened\n",
+                                      "b \n", "g h clsoe\n", "b on\n"])
+    assert out == [["f_bool 1"], ["f_bool 1"], ["f_bool 0"], ["f_bool 0"], ["bad"], ["bad"],
+                   ["bad"], ["bad"], ["f_bool 1"]]
+
+
+@needs_cxx
+def test_bad_bool_with_no_callback_bound_runs_nothing(tmp_path):
+    out = run_cases(tmp_path, SMALL, ["b maybe\n", "b off\n"], bind_bad=False)
+    assert out == [[], ["f_bool 0"]]
+
+
+@needs_cxx
+def test_unknown_character_sinks_until_newline(tmp_path):
+    # Before, State_0 looped on the unknown character and "xv" ran v.
+    out = run_cases(tmp_path, SMALL, ["xv\n", "xb on\n", "vx\nv\n", "g x h on\n", "b on\n", "\n\nv\n"])
+    assert out == [[], [], ["f_void"], [], ["f_bool 1"], ["f_void"]]
+
+
+@needs_cxx
+def test_unknown_line_calls_on_unknown_command_once(tmp_path):
+    out = run_cases(tmp_path, SMALL, [
+        "zzz\n",      # garbage: through State_Sink
+        " v\n",       # leading space: through State_Sink
+        "g\n",        # partial command: newline in a literal state
+        "g h\n",      # bool command without its argument
+        "vx\n",       # stray character after a void command
+        "\n",         # empty line: nothing
+        "v\n",        # a real command: no unknown
+        "b maybe\n",  # bad argument is not an unknown command
+    ], bind_unknown=True)
+    assert out == [["unknown"], ["unknown"], ["unknown"], ["unknown"], ["unknown"], [], ["f_void"], ["bad"]]
+
+
+@needs_cxx
+def test_unbound_driver_member_is_a_silent_no_op(tmp_path):
+    # A board that bumps the generator without binding a new command must not
+    # jump through nullptr (ASan and UBSan are on in run_cases).
+    out = run_cases(tmp_path, SMALL, ["v\n", "b on\n", "i 4\n", "g h off\n", "fl 2\n", "b maybe\n", "zzz\n"],
+                    bind_bad=True, unbound=("f_void", "f_bool", "f_int", "g_h"))
+    assert out == [[], [], [], [], ["f_float 2"], ["bad"], []]
+
+
+@needs_cxx
+def test_optional_callbacks_unbound_are_a_silent_no_op(tmp_path):
+    out = run_cases(tmp_path, SMALL, ["b maybe\n", "zzz\n", "g\n", "v\n"], bind_bad=False, bind_unknown=False)
+    assert out == [[], [], [], ["f_void"]]
+
+
+@needs_cxx
+def test_namespaced_parser_behaves_the_same(tmp_path):
+    out = run_cases(tmp_path, SMALL, ["b on\n", "b open\n", "b off\n", "g h on\n", "v\n", "zzz\n"], "ns")
+    assert out == [["f_bool 1"], ["f_bool 1"], ["f_bool 0"], ["g_h 1"], ["f_void"], []]
 
 
 @needs_cxx

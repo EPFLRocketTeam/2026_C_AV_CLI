@@ -15,9 +15,12 @@ jobs:
           python-version: "3.13"
       - run: pip install pyyaml pytest
       - run: pytest
-      - name: Generated files match commands.yaml
+      - name: Generated files match commands.yaml and prc_commands.yaml
         run: |
           out="$(mktemp -d)"
           python generate_commands.py commands.yaml "$out" fc_commands_generated
-          diff -u fc_commands_generated.hpp "$out/fc_commands_generated.hpp"
-          diff -u fc_commands_generated.cpp "$out/fc_commands_generated.cpp"
+          python generate_commands.py prc_commands.yaml "$out" prc_commands_generated --namespace prc_cli
+          for f in fc_commands_generated prc_commands_generated; do
+            diff -u "$f.hpp" "$out/$f.hpp"
+            diff -u "$f.cpp" "$out/$f.cpp"
+          done
