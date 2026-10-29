@@ -134,6 +134,9 @@ system:
   reboot:
     "%void":
       "%run": system_reboot
+  confirm:
+    "%void":
+      "%run": system_confirm
 
 # === LOGGING ===
 logs:
