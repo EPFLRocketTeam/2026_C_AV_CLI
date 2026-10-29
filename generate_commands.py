@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """Generates <basename>.hpp/.cpp from a command-tree YAML file.
 
-Usage: generate_commands.py <commands.yaml> <output_dir> [basename]
+Usage: generate_commands.py <commands.yaml> <output_dir> [basename] [--namespace NAME]
   basename defaults to "commands_generated" if not given.
+  --namespace wraps every emitted declaration and definition in
+  namespace NAME { }, so two generated pairs can live in one binary.
 
 Builds a character-level trie: each leaf's full path (its ancestor keys
 joined by single spaces, plus one trailing space) becomes a literal
@@ -12,6 +14,7 @@ every character up to \\n is appended to a buffer; \\n triggers parsing
 the buffer per the leaf's declared type and calling its driver function.
 """
 
+import argparse
 import os
 import sys
 import yaml
@@ -99,7 +102,7 @@ def collect_states(root):
     return states
 
 
-def generate_header(states, leaves, basename):
+def generate_header(states, leaves, basename, namespace=None):
     functions = sorted({(f, t) for (_, t, f) in leaves})
     seen = {}
     for function, type_name in functions:
@@ -116,6 +119,9 @@ def generate_header(states, leaves, basename):
     lines.append("")
     lines.append("#include <cstring>")
     lines.append("")
+    if namespace:
+        lines.append(f"namespace {namespace} {{")
+        lines.append("")
     lines.append("enum State {")
     for s in states:
         lines.append(f"    State_{s.id},")
@@ -139,16 +145,22 @@ def generate_header(states, leaves, basename):
     lines.append("")
     lines.append("void push_char(context* ctx, const driver* drv, char c);")
     lines.append("")
+    if namespace:
+        lines.append(f"}}  // namespace {namespace}")
+        lines.append("")
     return "\n".join(lines)
 
 
-def generate_source(states, basename):
+def generate_source(states, basename, namespace=None):
     lines = []
     lines.append("// GENERATED FILE -- do not edit by hand. Regenerate with generate_commands.py.")
     lines.append(f'#include "{basename}.hpp"')
     lines.append("")
     lines.append("#include <cstdlib>")
     lines.append("")
+    if namespace:
+        lines.append(f"namespace {namespace} {{")
+        lines.append("")
     lines.append("void push_char(context* ctx, const driver* drv, char c) {")
     lines.append("    switch (ctx->state) {")
 
@@ -191,16 +203,26 @@ def generate_source(states, basename):
     lines.append("    }")
     lines.append("}")
     lines.append("")
+    if namespace:
+        lines.append(f"}}  // namespace {namespace}")
+        lines.append("")
     return "\n".join(lines)
 
 
 def main():
-    if len(sys.argv) < 3:
-        sys.exit(f"usage: {sys.argv[0]} <commands.yaml> <output_dir> [basename]")
+    parser = argparse.ArgumentParser(description="Generate the command parser from a command-tree YAML file.")
+    parser.add_argument("yaml_path", metavar="commands.yaml")
+    parser.add_argument("output_dir")
+    parser.add_argument("basename", nargs="?", default="commands_generated")
+    parser.add_argument("--namespace", metavar="NAME", help="wrap the emitted code in namespace NAME { }")
+    args = parser.parse_args()
 
-    yaml_path = sys.argv[1]
-    output_dir = sys.argv[2]
-    basename = sys.argv[3] if len(sys.argv) > 3 else "commands_generated"
+    yaml_path = args.yaml_path
+    output_dir = args.output_dir
+    basename = args.basename
+    namespace = args.namespace
+    if namespace is not None and not namespace.isidentifier():
+        sys.exit(f"namespace '{namespace}' is not a C++ identifier")
 
     with open(yaml_path) as f:
         tree = yaml.safe_load(f)
@@ -212,9 +234,9 @@ def main():
     states = collect_states(root)
 
     with open(os.path.join(output_dir, f"{basename}.hpp"), "w", newline="\n") as f:
-        f.write(generate_header(states, leaves, basename))
+        f.write(generate_header(states, leaves, basename, namespace))
     with open(os.path.join(output_dir, f"{basename}.cpp"), "w", newline="\n") as f:
-        f.write(generate_source(states, basename))
+        f.write(generate_source(states, basename, namespace))
 
     print(f"Generated {len(states)} states from {len(leaves)} command(s).")
 

@@ -20,6 +20,14 @@ ROOT = Path(__file__).resolve().parent.parent
 YAML_PATH = ROOT / "commands.yaml"
 BASENAME = "fc_commands_generated"
 
+# Every committed generated pair: (yaml, basename, namespace). The FC pair is
+# emitted without a namespace, the PRC pair inside prc_cli.
+PAIRS = [
+    ("commands.yaml", BASENAME, None),
+    ("prc_commands.yaml", "prc_commands_generated", "prc_cli"),
+]
+pairs = pytest.mark.parametrize("yaml_name,basename,namespace", PAIRS, ids=[b for _, b, _ in PAIRS])
+
 
 def leaves_of(text):
     leaves = []
@@ -27,14 +35,14 @@ def leaves_of(text):
     return leaves
 
 
-def emit(text, out_dir, basename="gen"):
+def emit(text, out_dir, basename="gen", namespace=None):
     """Run the real CLI on yaml text, like CI does."""
     src = out_dir / "in.yaml"
     src.write_text(text, newline="\n")
-    subprocess.run(
-        [sys.executable, str(ROOT / "generate_commands.py"), str(src), str(out_dir), basename],
-        check=True, capture_output=True, text=True,
-    )
+    cmd = [sys.executable, str(ROOT / "generate_commands.py"), str(src), str(out_dir), basename]
+    if namespace:
+        cmd += ["--namespace", namespace]
+    subprocess.run(cmd, check=True, capture_output=True, text=True)
     return out_dir / f"{basename}.hpp", out_dir / f"{basename}.cpp"
 
 
@@ -125,12 +133,13 @@ def test_arg_buffer_is_bounded_in_emitted_code(tmp_path):
     assert cpp.read_text().count(f"ctx->arg_len < {gc.ARG_BUFFER_SIZE}") == 4
 
 
-def test_real_yaml_counts_match_committed_output():
-    leaves = leaves_of(YAML_PATH.read_text())
+@pairs
+def test_real_yaml_counts_match_committed_output(yaml_name, basename, namespace):
+    leaves = leaves_of((ROOT / yaml_name).read_text())
     root, _ = gc.build_trie(leaves)
     states = gc.collect_states(root)
-    hpp = (ROOT / f"{BASENAME}.hpp").read_text()
-    cpp = (ROOT / f"{BASENAME}.cpp").read_text()
+    hpp = (ROOT / f"{basename}.hpp").read_text()
+    cpp = (ROOT / f"{basename}.cpp").read_text()
     assert len(re.findall(r"^    State_\d+,$", hpp, re.M)) == len(states)
     assert len(re.findall(r"^    case State_\d+: \{$", cpp, re.M)) == len(states)
     callbacks = {f for _, _, f in leaves}
@@ -138,34 +147,88 @@ def test_real_yaml_counts_match_committed_output():
     assert len(re.findall(r"drv->\w+\(ctx->handler_ctx", cpp)) == len(leaves)
 
 
-def test_committed_output_is_in_sync(tmp_path):
-    emit(YAML_PATH.read_text(), tmp_path, BASENAME)
+@pairs
+def test_committed_output_is_in_sync(tmp_path, yaml_name, basename, namespace):
+    emit((ROOT / yaml_name).read_text(), tmp_path, basename, namespace)
     for ext in ("hpp", "cpp"):
-        fresh = (tmp_path / f"{BASENAME}.{ext}").read_bytes()
-        committed = (ROOT / f"{BASENAME}.{ext}").read_bytes()
-        assert fresh == committed, f"{BASENAME}.{ext} is stale, rerun generate_commands.py"
+        fresh = (tmp_path / f"{basename}.{ext}").read_bytes()
+        committed = (ROOT / f"{basename}.{ext}").read_bytes()
+        assert fresh == committed, f"{basename}.{ext} is stale, rerun generate_commands.py"
 
 
-def test_generation_is_deterministic(tmp_path):
+@pairs
+def test_generation_is_deterministic(tmp_path, yaml_name, basename, namespace):
     a, b = tmp_path / "a", tmp_path / "b"
     a.mkdir()
     b.mkdir()
-    emit(YAML_PATH.read_text(), a, BASENAME)
-    emit(YAML_PATH.read_text(), b, BASENAME)
+    emit((ROOT / yaml_name).read_text(), a, basename, namespace)
+    emit((ROOT / yaml_name).read_text(), b, basename, namespace)
     for ext in ("hpp", "cpp"):
-        assert (a / f"{BASENAME}.{ext}").read_bytes() == (b / f"{BASENAME}.{ext}").read_bytes()
+        assert (a / f"{basename}.{ext}").read_bytes() == (b / f"{basename}.{ext}").read_bytes()
 
 
 @needs_cxx
-def test_real_generated_cpp_compiles(tmp_path):
-    emit(YAML_PATH.read_text(), tmp_path, BASENAME)
-    res = run_cxx(tmp_path, f"g++ -std=c++20 -Wall -Werror -fsyntax-only -I. {BASENAME}.cpp")
+@pairs
+def test_real_generated_cpp_compiles(tmp_path, yaml_name, basename, namespace):
+    emit((ROOT / yaml_name).read_text(), tmp_path, basename, namespace)
+    res = run_cxx(tmp_path, f"g++ -std=c++20 -Wall -Werror -fsyntax-only -I. {basename}.cpp")
     assert res.returncode == 0, res.stderr
 
 
-def harness(leaves):
+# --- --namespace ---------------------------------------------------------------
+
+def test_namespace_wraps_every_emitted_symbol(tmp_path):
+    hpp, cpp = emit(SMALL, tmp_path, namespace="ns")
+    h, c = hpp.read_text(), cpp.read_text()
+    # opened after the includes, before the first symbol, closed at the very end
+    assert h.index("#include <cstring>") < h.index("namespace ns {") < h.index("enum State {")
+    assert h.rstrip().endswith("}  // namespace ns")
+    assert c.index('#include "gen.hpp"') < c.index("namespace ns {") < c.index("void push_char(")
+    assert c.rstrip().endswith("}  // namespace ns")
+
+
+def test_no_namespace_emits_none(tmp_path):
+    hpp, cpp = emit(SMALL, tmp_path)
+    assert "namespace" not in hpp.read_text()
+    assert "namespace" not in cpp.read_text()
+
+
+def test_namespace_must_be_an_identifier(tmp_path):
+    src = tmp_path / "in.yaml"
+    src.write_text(SMALL, newline="\n")
+    res = subprocess.run(
+        [sys.executable, str(ROOT / "generate_commands.py"), str(src), str(tmp_path), "gen",
+         "--namespace", "not a name"],
+        capture_output=True, text=True,
+    )
+    assert res.returncode != 0
+    assert "not a C++ identifier" in res.stderr
+
+
+@needs_cxx
+def test_both_committed_pairs_link_into_one_binary(tmp_path):
+    # The PRC pair lives in prc_cli, so it does not collide with the FC pair's
+    # global State, driver, context and push_char.
+    for yaml_name, basename, namespace in PAIRS:
+        emit((ROOT / yaml_name).read_text(), tmp_path, basename, namespace)
+    (tmp_path / "both.cpp").write_text(
+        '#include "fc_commands_generated.hpp"\n'
+        '#include "prc_commands_generated.hpp"\n'
+        "int main() { context a; prc_cli::context b; return a.arg_len + b.arg_len; }\n",
+        newline="\n",
+    )
+    res = run_cxx(
+        tmp_path,
+        "g++ -std=c++20 -Wall -Werror -I. both.cpp fc_commands_generated.cpp prc_commands_generated.cpp -o both && ./both",
+    )
+    assert res.returncode == 0, res.stderr + res.stdout
+
+
+def harness(leaves, namespace=None):
     funcs = sorted({(f, t) for _, t, f in leaves})
     out = ['#include "gen.hpp"', "#include <cstdio>", "#include <string>"]
+    if namespace:
+        out.append(f"using namespace {namespace};")
     for f, t in funcs:
         if t == "void":
             out.append(f'static void {f}(void*) {{ std::printf("{f}\\n"); }}')
@@ -185,10 +248,10 @@ def harness(leaves):
     return "\n".join(out)
 
 
-def run_cases(tmp_path, text, cases):
+def run_cases(tmp_path, text, cases, namespace=None):
     """Compile the generated parser for yaml text and feed it each case; return output lines per case."""
-    emit(text, tmp_path)
-    (tmp_path / "main.cpp").write_text(harness(leaves_of(text)), newline="\n")
+    emit(text, tmp_path, namespace=namespace)
+    (tmp_path / "main.cpp").write_text(harness(leaves_of(text), namespace), newline="\n")
     (tmp_path / "cases.bin").write_bytes(b"\0".join(c.encode() for c in cases))
     res = run_cxx(
         tmp_path,
@@ -211,6 +274,12 @@ def test_parser_runtime_behaviour(tmp_path):
         ["f_bool 1"], ["f_bool 1"], ["f_bool 0"], ["f_int 42"], ["f_float 1.5"],
         ["g_h 1"], ["f_void"], [], [], [], ["f_void", "f_bool 1"],
     ]
+
+
+@needs_cxx
+def test_namespaced_parser_behaves_the_same(tmp_path):
+    out = run_cases(tmp_path, SMALL, ["b on\n", "b open\n", "b off\n", "g h on\n", "v\n", "zzz\n"], "ns")
+    assert out == [["f_bool 1"], ["f_bool 1"], ["f_bool 0"], ["g_h 1"], ["f_void"], []]
 
 
 @needs_cxx

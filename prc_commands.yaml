@@ -1,0 +1,72 @@
+# Propulsion computer (PRC) shell over USB CDC. One image serves the engine,
+# LOX and ethanol boards; every handler checks the board role itself and
+# prints a refusal when a command does not apply to this board.
+# Generate with: generate_commands.py prc_commands.yaml . prc_commands_generated --namespace prc_cli
+state:
+  "%void":
+    "%run": state_print
+sensors:
+  "%void":
+    "%run": sensors_print
+
+valve:
+  # DPR boards only, through the DPR FSM's manual override allow list
+  vent:
+    "%bool":
+      "%run": valve_vent
+  safety:
+    "%bool":
+      "%run": valve_safety
+  copv_vent:
+    "%bool":
+      "%run": valve_copv_vent
+  ball:
+    "%float":
+      "%run": valve_ball
+  # Engine board only, refused outside the engine FSM's Idle state
+  mo:
+    "%bool":
+      "%run": valve_mo
+  me:
+    "%bool":
+      "%run": valve_me
+igniter:
+  "%bool":
+    "%run": igniter
+
+fsm:
+  pressurize:
+    "%bool":
+      "%run": fsm_pressurize
+  clear_to_ignite:
+    "%void":
+      "%run": fsm_clear_to_ignite
+  ignite:
+    "%void":
+      "%run": fsm_ignite
+  abort:
+    "%void":
+      "%run": fsm_abort
+  passivate:
+    "%void":
+      "%run": fsm_passivate
+  reset:
+    "%void":
+      "%run": fsm_reset
+
+logs:
+  usb:
+    "%bool":
+      "%run": logs_usb
+  can:
+    "%bool":
+      "%run": logs_can
+
+config:
+  print:
+    status:
+      "%void":
+        "%run": config_print_status
+  commit:
+    "%void":
+      "%run": config_commit
