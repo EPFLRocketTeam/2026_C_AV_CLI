@@ -101,14 +101,19 @@ def test_type_signatures_in_header(tmp_path):
 def test_type_parse_expressions_in_source(tmp_path):
     _, cpp = emit(SMALL, tmp_path)
     text = cpp.read_text()
-    assert "drv->f_int(ctx->handler_ctx, strtol(ctx->arg_buffer, nullptr, 10));" in text
-    assert "drv->f_float(ctx->handler_ctx, strtof(ctx->arg_buffer, nullptr));" in text
-    assert 'if (strcmp(ctx->arg_buffer, "open") == 0 || strcmp(ctx->arg_buffer, "on") == 0) {' in text
-    assert 'strcmp(ctx->arg_buffer, "close") == 0 || strcmp(ctx->arg_buffer, "off") == 0' in text
-    assert "drv->f_bool(ctx->handler_ctx, true);" in text
-    assert "drv->f_bool(ctx->handler_ctx, false);" in text
+    assert "fn_int(ctx->handler_ctx, strtol(ctx->arg_buffer, nullptr, 10));" in text
+    assert "fn_float(ctx->handler_ctx, strtof(ctx->arg_buffer, nullptr));" in text
+    assert 'if (strcmp(arg, "open") == 0 || strcmp(arg, "on") == 0) return 1;' in text
+    assert 'if (strcmp(arg, "close") == 0 || strcmp(arg, "off") == 0) return 0;' in text
+    assert "fn_bool(ctx->handler_ctx, value == 1);" in text
     assert "drv->on_bad_argument(ctx->handler_ctx);" in text
-    assert "drv->f_void(ctx->handler_ctx);" in text
+    assert re.search(r"case State_\d+: fn_int = drv->f_int; break;", text)
+    assert re.search(r"case State_\d+: fn_bool = drv->f_bool; is_bool = true; break;", text)
+    assert re.search(r"case State_\d+: fn_void = drv->f_void; break;", text)
+    # every call through the driver is guarded
+    assert "if (fn_void != nullptr) fn_void(ctx->handler_ctx);" in text
+    assert "else if (fn_bool != nullptr) fn_bool(" in text
+    assert "} else if (fn_int != nullptr) {" in text
 
 
 def test_leaf_paths_join_ancestors():
@@ -130,8 +135,8 @@ def test_void_literal_has_no_trailing_space_and_arg_types_do():
 def test_arg_buffer_is_bounded_in_emitted_code(tmp_path):
     hpp, cpp = emit(SMALL, tmp_path)
     assert f"char arg_buffer[{gc.ARG_BUFFER_SIZE + 1}];" in hpp.read_text()
-    # every argument state (bool, int, float, g h) carries the guard
-    assert cpp.read_text().count(f"ctx->arg_len < {gc.ARG_BUFFER_SIZE}") == 4
+    # one shared append path guards every argument state (bool, int, float, g h)
+    assert cpp.read_text().count(f"ctx->arg_len < {gc.ARG_BUFFER_SIZE}") == 1
 
 
 @pairs
@@ -142,16 +147,15 @@ def test_real_yaml_counts_match_committed_output(yaml_name, basename, namespace)
     hpp = (ROOT / f"{basename}.hpp").read_text()
     cpp = (ROOT / f"{basename}.cpp").read_text()
     assert len(re.findall(r"^    State_\d+,$", hpp, re.M)) == len(states)
-    assert len(re.findall(r"^    case State_\d+: \{$", cpp, re.M)) == len(states)
+    # every state but State_Sink has exactly one case, in one of three switches
+    assert len(re.findall(r"^ +case State_\d+:", cpp, re.M)) == len(states)
     callbacks = {f for _, _, f in leaves}
     # every yaml callback plus the optional on_bad_argument and on_unknown_command members
     assert len(re.findall(r"^    void \(\*\w+\)\(void\* ctx", hpp, re.M)) == len(callbacks) + 2
-    # a bool leaf calls its function twice (true, false) and on_bad_argument once
-    bools = sum(1 for _, t, _ in leaves if t == "bool")
-    assert len(re.findall(r"drv->(?!on_unknown_command)\w+\(ctx->handler_ctx", cpp)) == len(leaves) + 2 * bools
-    # on_unknown_command: every literal state but the root, plus State_Sink
-    literal = sum(1 for s in states if s.arg_leaf is None)
-    assert len(re.findall(r"drv->on_unknown_command\(ctx->handler_ctx", cpp)) == literal - 1 + 1
+    # every leaf picks its driver member once; the two optional callbacks are called once each
+    assert len(re.findall(r"= drv->\w+;", cpp)) == len(leaves)
+    assert len(re.findall(r"drv->on_bad_argument\(ctx->handler_ctx", cpp)) == (1 if any(t == "bool" for _, t, _ in leaves) else 0)
+    assert len(re.findall(r"drv->on_unknown_command\(ctx->handler_ctx", cpp)) == 1
 
 
 @pairs
@@ -265,7 +269,7 @@ def test_both_committed_pairs_link_into_one_binary(tmp_path, std):
     assert res.returncode == 0, res.stderr + res.stdout
 
 
-def harness(leaves, namespace=None, bind_bad=True, bind_unknown=False):
+def harness(leaves, namespace=None, bind_bad=True, bind_unknown=False, unbound=()):
     funcs = sorted({(f, t) for _, t, f in leaves})
     out = ['#include "gen.hpp"', "#include <cstdio>", "#include <string>"]
     if namespace:
@@ -284,6 +288,8 @@ def harness(leaves, namespace=None, bind_bad=True, bind_unknown=False):
         out.append("  d.on_bad_argument = on_bad;")
     if bind_unknown:
         out.append('  d.on_unknown_command = [](void*) { std::printf("unknown\\n"); };')
+    for f in unbound:
+        out.append(f"  d.{f} = nullptr;")
     out.append("  context c; std::string all; int ch;")
     out.append("  while ((ch = std::getchar()) != EOF) all.push_back((char)ch);")
     # A NUL byte separates cases: reset the context and print a marker line.
@@ -294,10 +300,11 @@ def harness(leaves, namespace=None, bind_bad=True, bind_unknown=False):
     return "\n".join(out)
 
 
-def run_cases(tmp_path, text, cases, namespace=None, bind_bad=True, bind_unknown=False):
+def run_cases(tmp_path, text, cases, namespace=None, bind_bad=True, bind_unknown=False, unbound=()):
     """Compile the generated parser for yaml text and feed it each case; return output lines per case."""
     emit(text, tmp_path, namespace=namespace)
-    (tmp_path / "main.cpp").write_text(harness(leaves_of(text), namespace, bind_bad, bind_unknown), newline="\n")
+    (tmp_path / "main.cpp").write_text(
+        harness(leaves_of(text), namespace, bind_bad, bind_unknown, unbound), newline="\n")
     (tmp_path / "cases.bin").write_bytes(b"\0".join(c.encode() for c in cases))
     res = run_cxx(
         tmp_path,
@@ -356,6 +363,21 @@ def test_unknown_line_calls_on_unknown_command_once(tmp_path):
         "b maybe\n",  # bad argument is not an unknown command
     ], bind_unknown=True)
     assert out == [["unknown"], ["unknown"], ["unknown"], ["unknown"], ["unknown"], [], ["f_void"], ["bad"]]
+
+
+@needs_cxx
+def test_unbound_driver_member_is_a_silent_no_op(tmp_path):
+    # A board that bumps the generator without binding a new command must not
+    # jump through nullptr (ASan and UBSan are on in run_cases).
+    out = run_cases(tmp_path, SMALL, ["v\n", "b on\n", "i 4\n", "g h off\n", "fl 2\n", "b maybe\n", "zzz\n"],
+                    bind_bad=True, unbound=("f_void", "f_bool", "f_int", "g_h"))
+    assert out == [[], [], [], [], ["f_float 2"], ["bad"], []]
+
+
+@needs_cxx
+def test_optional_callbacks_unbound_are_a_silent_no_op(tmp_path):
+    out = run_cases(tmp_path, SMALL, ["b maybe\n", "zzz\n", "g\n", "v\n"], bind_bad=False, bind_unknown=False)
+    assert out == [[], [], [], ["f_void"]]
 
 
 @needs_cxx

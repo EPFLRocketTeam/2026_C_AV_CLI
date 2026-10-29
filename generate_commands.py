@@ -152,7 +152,7 @@ def generate_header(states, leaves, basename, namespace=None):
         lines.append(f"namespace {namespace} {{")
         lines.append("")
     lines.append("enum State {")
-    for s in states:
+    for s in sum(state_groups(states), []):
         lines.append(f"    State_{s.id},")
     lines.append("    State_Sink,")
     lines.append("};")
@@ -185,7 +185,64 @@ def generate_header(states, leaves, basename, namespace=None):
     return "\n".join(lines)
 
 
+def state_groups(states):
+    """Split the states into literal, void argument and typed argument states.
+
+    The State enum lists them in that order (root first, so State_0 stays 0
+    and a zeroed context is at the root), then State_Sink. push_char then
+    tells the three kinds apart with two range checks and dispatches each
+    kind through its own dense switch, so the state independent handling
+    (newline, sink, argument buffer) is emitted once instead of per state.
+    """
+    literal = [s for s in states if s.arg_leaf is None]
+    void = [s for s in states if s.arg_leaf is not None and s.arg_leaf[0] == "void"]
+    typed = [s for s in states if s.arg_leaf is not None and s.arg_leaf[0] != "void"]
+    return literal, void, typed
+
+
+def state_groups(states):
+    """Split the states into literal, void argument and typed argument states.
+
+    The State enum lists them in that order (root first, so State_0 stays 0
+    and a zeroed context is at the root), then State_Sink. push_char tells
+    the three kinds apart with two range checks and dispatches each kind
+    through its own dense switch, so the state independent handling
+    (newline, sink, argument buffer) is emitted once instead of per state.
+    """
+    literal = [s for s in states if s.arg_leaf is None]
+    void = [s for s in states if s.arg_leaf is not None and s.arg_leaf[0] == "void"]
+    typed = [s for s in states if s.arg_leaf is not None and s.arg_leaf[0] != "void"]
+    return literal, void, typed
+
+
+# Local function pointer per argument type in push_char's argument switches.
+POINTER = {"void": "fn_void", "bool": "fn_bool", "int": "fn_int", "float": "fn_float"}
+
+
 def generate_source(states, basename, namespace=None):
+    """Emit push_char.
+
+    Per state code is only what depends on the state: a literal state's
+    edges, and for an argument state which driver member to call. The
+    argument switches only pick that member into a local pointer; the
+    guarded call happens once per argument type after the switch, so a
+    board that binds only part of the driver gets a silent no op instead of
+    a jump through nullptr, at the cost of one check per type rather than
+    one per command. Everything else is emitted once: a typed argument state
+    appends any character but a newline to the buffer, a newline in a
+    literal state or State_Sink ends the line as an unknown command (unless
+    the line was empty), and any character with no edge goes to State_Sink.
+    """
+    literal, void, typed = state_groups(states)
+    first_void = len(literal)
+    first_typed = len(literal) + len(void)
+    typed_kinds = sorted({s.arg_leaf[0] for s in typed})
+
+    def pointer_decl(type_name):
+        cpp_type = TYPE_INFO[type_name]["cpp_type"]
+        args = "void*" if cpp_type is None else f"void*, {cpp_type}"
+        return f"void (*{POINTER[type_name]})({args}) = nullptr;"
+
     lines = []
     lines.append("// GENERATED FILE -- do not edit by hand. Regenerate with generate_commands.py.")
     lines.append(f'#include "{basename}.hpp"')
@@ -195,80 +252,95 @@ def generate_source(states, basename, namespace=None):
     if namespace:
         lines.append(f"namespace {namespace} {{")
         lines.append("")
+    if "bool" in typed_kinds:
+        words = lambda ws: " || ".join(f'strcmp(arg, "{w}") == 0' for w in ws)
+        lines.append("// 1 for open or on, 0 for close or off, -1 for anything else.")
+        lines.append("static int parse_bool(const char* arg) {")
+        lines.append(f"    if ({words(BOOL_TRUE)}) return 1;")
+        lines.append(f"    if ({words(BOOL_FALSE)}) return 0;")
+        lines.append("    return -1;")
+        lines.append("}")
+        lines.append("")
     lines.append("void push_char(context* ctx, const driver* drv, char c) {")
-    lines.append("    switch (ctx->state) {")
+    lines.append("    // State enum order: literal states, void argument states, typed")
+    lines.append("    // argument states, State_Sink.")
+    lines.append("    const int state = ctx->state;")
+    lines.append("")
 
-    for s in states:
-        lines.append(f"    case State_{s.id}: {{")
-        if s.arg_leaf is not None:
+    if typed:
+        lines.append(f"    if (state >= {first_typed} && state != State_Sink) {{")
+        lines.append("        // typed argument state: buffer until the newline, then parse and call")
+        lines.append("        if (c != '\\n') {")
+        lines.append(f"            if (ctx->arg_len < {ARG_BUFFER_SIZE}) ctx->arg_buffer[ctx->arg_len++] = c;")
+        lines.append("            return;")
+        lines.append("        }")
+        lines.append("        ctx->arg_buffer[ctx->arg_len] = '\\0';")
+        lines.append("        ctx->state = State_0;")
+        lines.append("        ctx->arg_len = 0;")
+        for type_name in typed_kinds:
+            lines.append(f"        {pointer_decl(type_name)}")
+        if "bool" in typed_kinds:
+            lines.append("        bool is_bool = false;")
+        lines.append("        switch (state) {")
+        for s in typed:
             type_name, function = s.arg_leaf
+            extra = " is_bool = true;" if type_name == "bool" else ""
+            lines.append(f"        case State_{s.id}: {POINTER[type_name]} = drv->{function};{extra} break;")
+        lines.append("        }")
+        branches = []
+        if "bool" in typed_kinds:
+            branches.append(("is_bool", [
+                "const int value = parse_bool(ctx->arg_buffer);",
+                f"if (value < 0) {{ if (drv->{BAD_ARGUMENT} != nullptr) drv->{BAD_ARGUMENT}(ctx->handler_ctx); }}",
+                "else if (fn_bool != nullptr) fn_bool(ctx->handler_ctx, value == 1);",
+            ]))
+        for type_name in typed_kinds:
+            if type_name == "bool":
+                continue
+            p = POINTER[type_name]
             parse_expr = TYPE_INFO[type_name]["parse_expr"]
-            if type_name == "void":
-                # void: fires immediately on \n, no argument buffered.
-                # Any other character goes to State_Sink -- a trigger
-                # command takes no argument, so "prc ignite x\n" is
-                # treated as a mistyped command rather than silently
-                # firing anyway.
-                lines.append("        if (c == '\\n') {")
-                lines.append(f"            drv->{function}(ctx->handler_ctx);")
-                lines.append("            ctx->state = State_0;")
-                lines.append("        } else {")
-                lines.append("            ctx->state = State_Sink;")
-                lines.append("        }")
-            elif type_name == "bool":
-                def words(ws):
-                    return " || ".join(f'strcmp(ctx->arg_buffer, "{w}") == 0' for w in ws)
-                lines.append("        if (c == '\\n') {")
-                lines.append(f"            ctx->arg_buffer[ctx->arg_len] = '\\0';")
-                lines.append(f"            if ({words(BOOL_TRUE)}) {{")
-                lines.append(f"                drv->{function}(ctx->handler_ctx, true);")
-                lines.append(f"            }} else if ({words(BOOL_FALSE)}) {{")
-                lines.append(f"                drv->{function}(ctx->handler_ctx, false);")
-                lines.append(f"            }} else if (drv->{BAD_ARGUMENT} != nullptr) {{")
-                lines.append(f"                drv->{BAD_ARGUMENT}(ctx->handler_ctx);")
-                lines.append("            }")
-                lines.append("            ctx->state = State_0;")
-                lines.append("            ctx->arg_len = 0;")
-                lines.append(f"        }} else if (ctx->arg_len < {ARG_BUFFER_SIZE}) {{")
-                lines.append("            ctx->arg_buffer[ctx->arg_len++] = c;")
-                lines.append("        }")
-            else:
-                lines.append("        if (c == '\\n') {")
-                lines.append(f"            ctx->arg_buffer[ctx->arg_len] = '\\0';")
-                lines.append(f"            drv->{function}(ctx->handler_ctx, {parse_expr});")
-                lines.append("            ctx->state = State_0;")
-                lines.append("            ctx->arg_len = 0;")
-                lines.append(f"        }} else if (ctx->arg_len < {ARG_BUFFER_SIZE}) {{")
-                lines.append("            ctx->arg_buffer[ctx->arg_len++] = c;")
-                lines.append("        }")
-        else:
-            lines.append("        switch (c) {")
-            for ch, child in sorted(s.children.items()):
-                escaped = "' '" if ch == " " else f"'{ch}'"
-                lines.append(f"        case {escaped}: ctx->state = State_{child.id}; break;")
-            # A newline with no edge ends a mistyped or partial command
-            # (reported, except an empty line at the root); any other
-            # unknown character waits in State_Sink for it.
-            if s.id == 0:
-                lines.append("        case '\\n': ctx->state = State_0; break;")
-            else:
-                lines.append("        case '\\n':")
-                lines.append("            ctx->state = State_0;")
-                lines.append(f"            if (drv->{UNKNOWN_COMMAND} != nullptr) drv->{UNKNOWN_COMMAND}(ctx->handler_ctx);")
-                lines.append("            break;")
-            lines.append("        default: ctx->state = State_Sink; break;")
-            lines.append("        }")
-        lines.append("        break;")
+            branches.append((f"{p} != nullptr", [f"{p}(ctx->handler_ctx, {parse_expr});"]))
+        for i, (cond, body) in enumerate(branches):
+            lines.append(f"        {'if' if i == 0 else '} else if'} ({cond}) {{")
+            for b in body:
+                lines.append(f"            {b}")
+        lines.append("        }")
+        lines.append("        return;")
         lines.append("    }")
+        lines.append("")
 
-    lines.append("    case State_Sink: {")
-    lines.append("        if (c == '\\n') {")
-    lines.append("            ctx->state = State_0;")
-    lines.append(f"            if (drv->{UNKNOWN_COMMAND} != nullptr) drv->{UNKNOWN_COMMAND}(ctx->handler_ctx);")
-    lines.append("        }")
-    lines.append("        break;")
+    lines.append("    if (c == '\\n') {")
+    lines.append("        ctx->state = State_0;")
+    if void:
+        lines.append(f"        if (state >= {first_void} && state < {first_typed}) {{")
+        lines.append("            // void argument state: the newline right after the path fires it")
+        lines.append(f"            {pointer_decl('void')}")
+        lines.append("            switch (state) {")
+        for s in void:
+            lines.append(f"            case State_{s.id}: fn_void = drv->{s.arg_leaf[1]}; break;")
+        lines.append("            }")
+        lines.append("            if (fn_void != nullptr) fn_void(ctx->handler_ctx);")
+        lines.append("            return;")
+        lines.append("        }")
+    lines.append("        // a literal state or State_Sink: the line matched no command,")
+    lines.append("        // unless it was empty (still at the root)")
+    lines.append(f"        if (state != State_0 && drv->{UNKNOWN_COMMAND} != nullptr) drv->{UNKNOWN_COMMAND}(ctx->handler_ctx);")
+    lines.append("        return;")
     lines.append("    }")
+    lines.append("")
+    lines.append("    switch (state) {")
+    for s in literal:
+        lines.append(f"    case State_{s.id}:")
+        lines.append("        switch (c) {")
+        for ch, child in sorted(s.children.items()):
+            escaped = "' '" if ch == " " else f"'{ch}'"
+            lines.append(f"        case {escaped}: ctx->state = State_{child.id}; return;")
+        lines.append("        }")
+        lines.append("        break;")
     lines.append("    }")
+    lines.append("    // no edge for c (or a stray character after a void command): wait in")
+    lines.append("    // State_Sink for the newline, so the rest of the line cannot run")
+    lines.append("    ctx->state = State_Sink;")
     lines.append("}")
     lines.append("")
     if namespace:
