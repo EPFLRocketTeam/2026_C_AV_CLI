@@ -160,6 +160,7 @@ enum State {
     State_147,
     State_148,
     State_149,
+    State_Sink,
 };
 
 struct driver {
@@ -182,6 +183,8 @@ struct driver {
     void (*valve_mo)(void* ctx, bool value);
     void (*valve_safety)(void* ctx, bool value);
     void (*valve_vent)(void* ctx, bool value);
+    // Optional: called when a bool argument is not open, close, on or off.
+    void (*on_bad_argument)(void* ctx) = nullptr;
 };
 
 struct context {

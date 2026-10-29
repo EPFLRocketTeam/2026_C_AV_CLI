@@ -733,6 +733,7 @@ enum State {
     State_722,
     State_723,
     State_724,
+    State_Sink,
 };
 
 struct driver {
@@ -809,6 +810,8 @@ struct driver {
     void (*vent_copv)(void* ctx, bool value);
     void (*vent_fuel)(void* ctx, bool value);
     void (*vent_lox)(void* ctx, bool value);
+    // Optional: called when a bool argument is not open, close, on or off.
+    void (*on_bad_argument)(void* ctx) = nullptr;
 };
 
 struct context {

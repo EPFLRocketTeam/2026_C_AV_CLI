@@ -12,6 +12,11 @@ sequence of state transitions. The state reached right after that
 literal sequence is an "argument state" for that leaf -- from there,
 every character up to \\n is appended to a buffer; \\n triggers parsing
 the buffer per the leaf's declared type and calling its driver function.
+
+A character with no edge sends the parser to State_Sink, which only a
+newline leaves, so "xfsm ignite" runs nothing. A bool argument must be
+open, close, on or off; anything else runs nothing and calls the optional
+driver member on_bad_argument if it is bound.
 """
 
 import argparse
@@ -22,7 +27,9 @@ import yaml
 TYPE_INFO = {
     "int":   {"cpp_type": "int", "parse_expr": "strtol(ctx->arg_buffer, nullptr, 10)"},
     "float": {"cpp_type": "float", "parse_expr": "strtof(ctx->arg_buffer, nullptr)"},
-    "bool":  {"cpp_type": "bool",  "parse_expr": '(strcmp(ctx->arg_buffer, "open") == 0 || strcmp(ctx->arg_buffer, "on") == 0)'},
+    # bool is emitted by its own branch in generate_source: true for open or
+    # on, false for close or off, anything else is a bad argument.
+    "bool":  {"cpp_type": "bool",  "parse_expr": None},
     # Zero-argument trigger commands (e.g. "prc ignite"): fires as soon as
     # \n is typed right after the literal path, no argument buffered at
     # all -- cpp_type is None rather than a real type, so the driver
@@ -31,6 +38,22 @@ TYPE_INFO = {
 }
 
 ARG_BUFFER_SIZE = 32  # usable chars; +1 more reserved for the NUL terminator
+
+BAD_ARGUMENT = "on_bad_argument"  # optional driver member, always emitted last
+BOOL_TRUE = ("open", "on")
+BOOL_FALSE = ("close", "off")
+
+CPP_KEYWORDS = frozenset("""
+alignas alignof and and_eq asm auto bitand bitor bool break case catch char
+char8_t char16_t char32_t class compl concept const consteval constexpr
+constinit const_cast continue co_await co_return co_yield decltype default
+delete do double dynamic_cast else enum explicit export extern false float for
+friend goto if inline int long mutable namespace new noexcept not not_eq
+nullptr operator or or_eq private protected public register reinterpret_cast
+requires return short signed sizeof static static_assert static_cast struct
+switch template this thread_local throw true try typedef typeid typename union
+unsigned using virtual void volatile wchar_t while xor xor_eq
+""".split())
 
 
 class TrieNode:
@@ -69,7 +92,7 @@ def build_trie(leaves):
         # argument at all, so there's nothing for a user to type after
         # the command name, and requiring that space before \n anyway
         # means the command could never actually be typed naturally.
-        is_void = TYPE_INFO[type_name]["parse_expr"] is None
+        is_void = type_name == "void"
         literal = path if is_void else path + " "
         node = root
         for ch in literal:
@@ -106,6 +129,8 @@ def generate_header(states, leaves, basename, namespace=None):
     functions = sorted({(f, t) for (_, t, f) in leaves})
     seen = {}
     for function, type_name in functions:
+        if function == BAD_ARGUMENT:
+            sys.exit(f"function name '{BAD_ARGUMENT}' is reserved for the bad argument callback")
         if seen.setdefault(function, type_name) != type_name:
             sys.exit(f"function '{function}' is used with two types: {seen[function]} and {type_name}")
 
@@ -125,6 +150,7 @@ def generate_header(states, leaves, basename, namespace=None):
     lines.append("enum State {")
     for s in states:
         lines.append(f"    State_{s.id},")
+    lines.append("    State_Sink,")
     lines.append("};")
     lines.append("")
     lines.append("struct driver {")
@@ -134,6 +160,8 @@ def generate_header(states, leaves, basename, namespace=None):
             lines.append(f"    void (*{function})(void* ctx);")
         else:
             lines.append(f"    void (*{function})(void* ctx, {cpp_type} value);")
+    lines.append("    // Optional: called when a bool argument is not open, close, on or off.")
+    lines.append(f"    void (*{BAD_ARGUMENT})(void* ctx) = nullptr;")
     lines.append("};")
     lines.append("")
     lines.append("struct context {")
@@ -169,9 +197,9 @@ def generate_source(states, basename, namespace=None):
         if s.arg_leaf is not None:
             type_name, function = s.arg_leaf
             parse_expr = TYPE_INFO[type_name]["parse_expr"]
-            if parse_expr is None:
+            if type_name == "void":
                 # void: fires immediately on \n, no argument buffered.
-                # Any other character just resets to State_0 -- a trigger
+                # Any other character goes to State_Sink -- a trigger
                 # command takes no argument, so "prc ignite x\n" is
                 # treated as a mistyped command rather than silently
                 # firing anyway.
@@ -179,7 +207,24 @@ def generate_source(states, basename, namespace=None):
                 lines.append(f"            drv->{function}(ctx->handler_ctx);")
                 lines.append("            ctx->state = State_0;")
                 lines.append("        } else {")
+                lines.append("            ctx->state = State_Sink;")
+                lines.append("        }")
+            elif type_name == "bool":
+                def words(ws):
+                    return " || ".join(f'strcmp(ctx->arg_buffer, "{w}") == 0' for w in ws)
+                lines.append("        if (c == '\\n') {")
+                lines.append(f"            ctx->arg_buffer[ctx->arg_len] = '\\0';")
+                lines.append(f"            if ({words(BOOL_TRUE)}) {{")
+                lines.append(f"                drv->{function}(ctx->handler_ctx, true);")
+                lines.append(f"            }} else if ({words(BOOL_FALSE)}) {{")
+                lines.append(f"                drv->{function}(ctx->handler_ctx, false);")
+                lines.append(f"            }} else if (drv->{BAD_ARGUMENT} != nullptr) {{")
+                lines.append(f"                drv->{BAD_ARGUMENT}(ctx->handler_ctx);")
+                lines.append("            }")
                 lines.append("            ctx->state = State_0;")
+                lines.append("            ctx->arg_len = 0;")
+                lines.append(f"        }} else if (ctx->arg_len < {ARG_BUFFER_SIZE}) {{")
+                lines.append("            ctx->arg_buffer[ctx->arg_len++] = c;")
                 lines.append("        }")
             else:
                 lines.append("        if (c == '\\n') {")
@@ -195,11 +240,18 @@ def generate_source(states, basename, namespace=None):
             for ch, child in sorted(s.children.items()):
                 escaped = "' '" if ch == " " else f"'{ch}'"
                 lines.append(f"        case {escaped}: ctx->state = State_{child.id}; break;")
-            lines.append("        default: ctx->state = State_0; break;")
+            # A newline with no edge ends a mistyped or partial command;
+            # any other unknown character waits in State_Sink for it.
+            lines.append("        case '\\n': ctx->state = State_0; break;")
+            lines.append("        default: ctx->state = State_Sink; break;")
             lines.append("        }")
         lines.append("        break;")
         lines.append("    }")
 
+    lines.append("    case State_Sink: {")
+    lines.append("        if (c == '\\n') ctx->state = State_0;")
+    lines.append("        break;")
+    lines.append("    }")
     lines.append("    }")
     lines.append("}")
     lines.append("")
@@ -221,7 +273,7 @@ def main():
     output_dir = args.output_dir
     basename = args.basename
     namespace = args.namespace
-    if namespace is not None and not namespace.isidentifier():
+    if namespace is not None and (not namespace.isidentifier() or namespace in CPP_KEYWORDS):
         sys.exit(f"namespace '{namespace}' is not a C++ identifier")
 
     with open(yaml_path) as f:
