@@ -126,6 +126,18 @@ cameras:
       "%run": cameras_recover
 
 
+# === SYSTEM ===
+system:
+  dfu:
+    "%void":
+      "%run": system_dfu
+  reboot:
+    "%void":
+      "%run": system_reboot
+  confirm:
+    "%void":
+      "%run": system_confirm
+
 # === LOGGING ===
 logs:
   can:

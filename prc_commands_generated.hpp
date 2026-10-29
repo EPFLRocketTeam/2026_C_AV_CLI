@@ -141,6 +141,25 @@ enum State {
     State_146,
     State_147,
     State_148,
+    State_150,
+    State_151,
+    State_152,
+    State_153,
+    State_154,
+    State_155,
+    State_156,
+    State_157,
+    State_159,
+    State_160,
+    State_161,
+    State_162,
+    State_163,
+    State_165,
+    State_166,
+    State_167,
+    State_168,
+    State_169,
+    State_170,
     State_5,
     State_11,
     State_87,
@@ -150,6 +169,9 @@ enum State {
     State_111,
     State_143,
     State_149,
+    State_158,
+    State_164,
+    State_171,
     State_22,
     State_29,
     State_39,
@@ -177,6 +199,9 @@ struct driver {
     void (*logs_usb)(void* ctx, bool value);
     void (*sensors_print)(void* ctx);
     void (*state_print)(void* ctx);
+    void (*system_confirm)(void* ctx);
+    void (*system_dfu)(void* ctx);
+    void (*system_reboot)(void* ctx);
     void (*valve_ball)(void* ctx, float value);
     void (*valve_copv_vent)(void* ctx, bool value);
     void (*valve_me)(void* ctx, bool value);
