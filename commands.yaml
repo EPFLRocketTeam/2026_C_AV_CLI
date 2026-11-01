@@ -32,6 +32,13 @@ ball:
   fuel:
     "%float":
       "%run": ball_fuel
+ballloop:
+  start:
+    "%void":
+      "%run": ballloop_start
+  stop:
+    "%void":
+      "%run": ballloop_stop
 prc:
   clear_to_ignite:
     "%void":

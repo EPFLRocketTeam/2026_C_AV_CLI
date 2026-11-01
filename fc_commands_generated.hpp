@@ -733,6 +733,18 @@ enum State {
     State_722,
     State_723,
     State_724,
+    State_725,
+    State_726,
+    State_727,
+    State_728,
+    State_729,
+    State_730,
+    State_731,
+    State_732,
+    State_733,
+    State_734,
+    State_735,
+    State_736,
 };
 
 struct driver {
@@ -743,6 +755,8 @@ struct driver {
     void (*av_recover)(void* ctx);
     void (*ball_fuel)(void* ctx, float value);
     void (*ball_lox)(void* ctx, float value);
+    void (*ballloop_start)(void* ctx);
+    void (*ballloop_stop)(void* ctx);
     void (*cameras_abort)(void* ctx);
     void (*cameras_display_aero_bot)(void* ctx);
     void (*cameras_display_aero_top)(void* ctx);
